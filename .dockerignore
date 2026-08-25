@@ -1,0 +1,11 @@
+node_modules
+npm-debug.log
+data
+public/uploads
+.env
+.git
+.github
+.vscode
+*.md
+coverage
+.nyc_output

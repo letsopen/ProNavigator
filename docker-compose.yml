@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: pronavigator
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - DB_PATH=/app/data/nav.db
+      - UPLOAD_DIR=/app/public/uploads
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRES_IN=2h
+      - LOG_LEVEL=info
+    volumes:
+      - nav-data:/app/data
+      - nav-uploads:/app/public/uploads
+    restart: unless-stopped
+
+volumes:
+  nav-data:
+  nav-uploads:

@@ -1,0 +1,125 @@
+<% layout('admin/layout') -%>
+
+<div class="bg-white shadow rounded-lg p-6">
+  <div class="flex justify-between items-center mb-6">
+    <h2 class="text-xl font-semibold text-gray-900">分类管理</h2>
+    <button id="addCategoryBtn" class="bg-blue-600 text-white px-4 py-2 rounded-md text-sm hover:bg-blue-700">新建分类</button>
+  </div>
+
+  <div id="categoryList" class="space-y-2">
+    <% categories.forEach(function(category) { %>
+      <div class="category-item flex items-center justify-between p-3 bg-gray-50 rounded-md cursor-move" data-id="<%= category.id %>">
+        <div class="flex items-center">
+          <svg class="w-5 h-5 text-gray-400 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+          <span class="font-medium text-gray-900"><%= category.categoryName %></span>
+        </div>
+        <div class="flex items-center space-x-2">
+          <button class="edit-btn text-blue-600 hover:text-blue-800 text-sm" data-id="<%= category.id %>" data-name="<%= category.categoryName %>">编辑</button>
+          <button class="delete-btn text-red-600 hover:text-red-800 text-sm" data-id="<%= category.id %>">删除</button>
+        </div>
+      </div>
+    <% }) %>
+  </div>
+</div>
+
+<div id="categoryModal" class="fixed inset-0 bg-gray-500 bg-opacity-75 hidden flex items-center justify-center">
+  <div class="bg-white rounded-lg p-6 w-full max-w-md">
+    <h3 id="modalTitle" class="text-lg font-medium text-gray-900 mb-4">新建分类</h3>
+    <input type="text" id="categoryName" class="w-full border border-gray-300 rounded-md px-3 py-2 mb-4" placeholder="分类名称" maxlength="50">
+    <div id="modalError" class="text-sm text-red-600 hidden mb-4"></div>
+    <div class="flex justify-end space-x-3">
+      <button id="cancelBtn" class="px-4 py-2 text-sm text-gray-700 hover:text-gray-900">取消</button>
+      <button id="saveBtn" class="px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700">保存</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  let editingId = null;
+  const modal = document.getElementById('categoryModal');
+  const modalTitle = document.getElementById('modalTitle');
+  const categoryNameInput = document.getElementById('categoryName');
+  const modalError = document.getElementById('modalError');
+
+  function openModal(title, name = '') {
+    modalTitle.textContent = title;
+    categoryNameInput.value = name;
+    modalError.classList.add('hidden');
+    modal.classList.remove('hidden');
+  }
+
+  function closeModal() {
+    modal.classList.add('hidden');
+    editingId = null;
+    categoryNameInput.value = '';
+  }
+
+  document.getElementById('addCategoryBtn').addEventListener('click', () => {
+    editingId = null;
+    openModal('新建分类');
+  });
+
+  document.getElementById('cancelBtn').addEventListener('click', closeModal);
+
+  document.getElementById('saveBtn').addEventListener('click', async () => {
+    const name = categoryNameInput.value.trim();
+    if (!name) {
+      modalError.textContent = '分类名称不能为空';
+      modalError.classList.remove('hidden');
+      return;
+    }
+
+    const url = editingId ? `/api/admin/categories/${editingId}` : '/api/admin/categories';
+    const method = editingId ? 'PUT' : 'POST';
+    const data = await apiFetch(url, {
+      method,
+      body: JSON.stringify({ categoryName: name }),
+    });
+
+    if (data.code === 0) {
+      closeModal();
+      window.location.reload();
+    } else {
+      modalError.textContent = data.message;
+      modalError.classList.remove('hidden');
+    }
+  });
+
+  document.querySelectorAll('.edit-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      editingId = btn.dataset.id;
+      openModal('编辑分类', btn.dataset.name);
+    });
+  });
+
+  document.querySelectorAll('.delete-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      if (!confirm('确定删除该分类吗？')) return;
+      const data = await apiFetch(`/api/admin/categories/${btn.dataset.id}`, { method: 'DELETE' });
+      if (data.code === 0) {
+        window.location.reload();
+      } else {
+        alert(data.message);
+      }
+    });
+  });
+
+  const sortable = Sortable.create(document.getElementById('categoryList'), {
+    animation: 150,
+    handle: '.category-item',
+    ghostClass: 'sortable-ghost',
+    onEnd: async () => {
+      const ids = Array.from(document.querySelectorAll('.category-item')).map(el => parseInt(el.dataset.id, 10));
+      const data = await apiFetch('/api/admin/categories/order', {
+        method: 'PUT',
+        body: JSON.stringify({ ids }),
+      });
+      if (data.code !== 0) {
+        alert(data.message || '排序保存失败');
+        window.location.reload();
+      }
+    },
+  });
+</script>

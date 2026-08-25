@@ -1,0 +1,48 @@
+<%- include('../partials/header') %>
+
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+  <div class="text-center mb-10">
+    <h1 class="text-3xl font-bold text-gray-900">ProNavigator</h1>
+    <p class="mt-2 text-gray-600">快速访问常用内部系统</p>
+  </div>
+
+  <% if (empty) { %>
+    <div class="text-center py-20">
+      <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+      </svg>
+      <h3 class="mt-2 text-sm font-medium text-gray-900">暂无导航内容</h3>
+      <p class="mt-1 text-sm text-gray-500">请联系管理员添加分类与网站。</p>
+    </div>
+  <% } else { %>
+    <% categories.forEach(function(category) { %>
+      <section class="mb-10">
+        <h2 class="text-xl font-semibold text-gray-900 mb-4 border-l-4 border-blue-600 pl-3"><%= category.categoryName %></h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <% category.websites.forEach(function(website) { %>
+            <div class="bg-white rounded-lg shadow hover:shadow-md transition-shadow p-5 flex flex-col justify-between">
+              <div>
+                <div class="flex items-center mb-3">
+                  <% if (website.logo) { %>
+                    <img src="<%= website.logo %>" alt="<%= website.websiteName %>" class="w-10 h-10 rounded object-cover mr-3">
+                  <% } else { %>
+                    <div class="w-10 h-10 rounded bg-blue-100 flex items-center justify-center text-blue-600 font-bold mr-3">
+                      <%= website.websiteName.charAt(0).toUpperCase() %>
+                    </div>
+                  <% } %>
+                  <h3 class="font-medium text-gray-900 truncate"><%= website.websiteName %></h3>
+                </div>
+              </div>
+              <div class="flex items-center justify-between mt-4">
+                <a href="<%= website.url %>" target="_blank" rel="noopener noreferrer" class="text-sm text-blue-600 hover:text-blue-800 font-medium">访问网站 &rarr;</a>
+                <a href="/website/<%= website.id %>" class="text-sm text-gray-500 hover:text-gray-700">详情</a>
+              </div>
+            </div>
+          <% }) %>
+        </div>
+      </section>
+    <% }) %>
+  <% } %>
+</main>
+
+<%- include('../partials/footer') %>

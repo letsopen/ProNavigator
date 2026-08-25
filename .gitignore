@@ -1,0 +1,11 @@
+node_modules
+data/*.db
+data/*.db-*
+public/uploads/*
+!public/uploads/.gitkeep
+.env
+.DS_Store
+.vscode
+*.log
+coverage
+.nyc_output
