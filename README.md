@@ -16,10 +16,8 @@
 
 - Node.js 20 + Express
 - SQLite + better-sqlite3
-- EJS + ejs-mate（服务端渲染）
-- Tailwind CSS（CDN）
+- Vue 3 + Vite + 腾讯 TDesign
 - Toast UI Editor + marked + DOMPurify
-- SortableJS
 - JWT（jsonwebtoken）
 - Docker + GitHub Actions
 
@@ -136,6 +134,9 @@ npm test
 
 # 开发模式热启动
 npm run dev
+
+# 单独构建前端
+npm run build:web
 ```
 
 ## 项目结构
@@ -156,7 +157,7 @@ pronavigator/
 │   ├── utils/            # 工具函数
 │   └── app.js            # 应用入口
 ├── tests/                # 测试
-├── views/                # EJS 模板
+├── web/                  # Vue 前端源码
 ├── Dockerfile
 ├── docker-compose.yml
 ├── package.json

@@ -3,6 +3,7 @@ data/*.db
 data/*.db-*
 public/uploads/*
 !public/uploads/.gitkeep
+public/dist
 .env
 .DS_Store
 .vscode

@@ -2,26 +2,20 @@ const express = require('express');
 const path = require('path');
 const morgan = require('morgan');
 
-const engine = require('ejs-mate');
 const config = require('./config');
 const { initDb } = require('./models/db');
 const logger = require('./utils/logger');
 const { notFoundHandler, errorHandler } = require('./middleware/error');
+const { AppError } = require('./utils/response');
 
 const app = express();
 
 // 初始化数据库
 initDb();
 
-// 视图引擎
-app.engine('ejs', engine);
-app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, '..', 'views'));
-
 // 静态资源
 app.use('/uploads', express.static(path.join(__dirname, '..', 'public', 'uploads')));
-app.use('/css', express.static(path.join(__dirname, '..', 'public', 'css')));
-app.use('/js', express.static(path.join(__dirname, '..', 'public', 'js')));
+app.use(express.static(path.join(__dirname, '..', 'public', 'dist')));
 
 // 请求日志
 app.use(morgan('combined', { stream: { write: msg => logger.info(msg.trim()) } }));
@@ -36,11 +30,19 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-// 路由
+// API 路由
 app.use('/api/admin', require('./routes/admin'));
 app.use('/api/public', require('./routes/public'));
-app.use('/', require('./routes/pages'));
-app.use('/', require('./routes/adminPages'));
+
+// API 404 处理
+app.use('/api', (req, res, next) => {
+  next(new AppError('接口不存在', 4004, 404));
+});
+
+// 前端 history fallback
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'public', 'dist', 'index.html'));
+});
 
 // 错误处理
 app.use(notFoundHandler);
