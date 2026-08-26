@@ -5,15 +5,6 @@
   >
     <el-header class="home-header pn-glass">
       <div class="pn-container header-inner">
-        <div class="logo-area">
-          <el-avatar
-            :size="48"
-            shape="square"
-            class="logo-avatar"
-          >
-            P
-          </el-avatar>
-        </div>
         <div class="title-area">
           <h1 class="main-title">
             ProNavigator
@@ -145,21 +136,9 @@ onMounted(loadHomeData);
   height: 100%;
   display: flex;
   align-items: center;
-}
-.logo-area {
-  flex: 0 0 25%;
-  display: flex;
-  align-items: center;
   justify-content: center;
 }
-.logo-avatar {
-  background: var(--pn-bg-elevated);
-  color: var(--pn-accent);
-  font-weight: 700;
-  border-radius: 10px;
-}
 .title-area {
-  flex: 0 0 75%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -222,6 +201,7 @@ onMounted(loadHomeData);
   align-items: center;
   justify-content: center;
   border-right: 1px solid var(--pn-border-color);
+  box-sizing: border-box;
 }
 .website-logo :deep(.el-avatar) {
   border-radius: 8px;
