@@ -10,42 +10,10 @@
     <label class="text-sm text-gray-700">按分类筛选：</label>
     <select id="categoryFilter" class="mt-1 border border-gray-300 rounded-md px-3 py-2 text-sm">
       <option value="">全部</option>
-      <% categories.forEach(function(category) { %>
-        <option value="<%= category.id %>"><%= category.categoryName %></option>
-      <% }) %>
     </select>
   </div>
 
   <div id="websiteList" class="space-y-2">
-    <% categories.forEach(function(category) { %>
-      <div class="mb-6">
-        <h3 class="text-lg font-medium text-gray-900 mb-2"><%= category.categoryName %></h3>
-        <div class="space-y-2 website-group" data-category-id="<%= category.id %>">
-          <% websites.filter(w => w.categoryId === category.id).forEach(function(website) { %>
-            <div class="website-item flex items-center justify-between p-3 bg-gray-50 rounded-md cursor-move" data-id="<%= website.id %>">
-              <div class="flex items-center">
-                <svg class="w-5 h-5 text-gray-400 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-                <% if (website.logo) { %>
-                  <img src="<%= website.logo %>" class="w-8 h-8 rounded object-cover mr-3">
-                <% } else { %>
-                  <div class="w-8 h-8 rounded bg-blue-100 flex items-center justify-center text-blue-600 text-xs font-bold mr-3"><%= website.websiteName.charAt(0).toUpperCase() %></div>
-                <% } %>
-                <div>
-                  <div class="font-medium text-gray-900"><%= website.websiteName %></div>
-                  <div class="text-xs text-gray-500 truncate max-w-xs"><%= website.url %></div>
-                </div>
-              </div>
-              <div class="flex items-center space-x-2">
-                <button class="edit-btn text-blue-600 hover:text-blue-800 text-sm" data-website='<%= JSON.stringify(website) %>'>编辑</button>
-                <button class="delete-btn text-red-600 hover:text-red-800 text-sm" data-id="<%= website.id %>">删除</button>
-              </div>
-            </div>
-          <% }) %>
-        </div>
-      </div>
-    <% }) %>
   </div>
 </div>
 
@@ -65,9 +33,6 @@
       <div>
         <label class="block text-sm font-medium text-gray-700">所属分类</label>
         <select id="categoryId" name="categoryId" required class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2">
-          <% categories.forEach(function(category) { %>
-            <option value="<%= category.id %>"><%= category.categoryName %></option>
-          <% }) %>
         </select>
       </div>
       <div>
@@ -96,11 +61,140 @@
 <script>
   let editor = null;
   let editingWebsiteId = null;
+  let categories = [];
+  let sortables = [];
 
   const websiteModal = document.getElementById('websiteModal');
   const websiteModalTitle = document.getElementById('websiteModalTitle');
   const websiteModalError = document.getElementById('websiteModalError');
   const websiteForm = document.getElementById('websiteForm');
+
+  function createWebsiteElement(website) {
+    const div = document.createElement('div');
+    div.className = 'website-item flex items-center justify-between p-3 bg-gray-50 rounded-md cursor-move';
+    div.dataset.id = website.id;
+    const logoHtml = website.logo
+      ? `<img src="${website.logo}" class="w-8 h-8 rounded object-cover mr-3">`
+      : `<div class="w-8 h-8 rounded bg-blue-100 flex items-center justify-center text-blue-600 text-xs font-bold mr-3">${website.websiteName.charAt(0).toUpperCase()}</div>`;
+    div.innerHTML = `
+      <div class="flex items-center">
+        <svg class="w-5 h-5 text-gray-400 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+        ${logoHtml}
+        <div>
+          <div class="font-medium text-gray-900">${website.websiteName}</div>
+          <div class="text-xs text-gray-500 truncate max-w-xs">${website.url}</div>
+        </div>
+      </div>
+      <div class="flex items-center space-x-2">
+        <button class="edit-btn text-blue-600 hover:text-blue-800 text-sm" data-website='${JSON.stringify(website).replace(/'/g, "&#39;")}'>编辑</button>
+        <button class="delete-btn text-red-600 hover:text-red-800 text-sm" data-id="${website.id}">删除</button>
+      </div>
+    `;
+    return div;
+  }
+
+  function renderCategoriesSelect() {
+    const categoryFilter = document.getElementById('categoryFilter');
+    const categoryIdSelect = document.getElementById('categoryId');
+    categoryFilter.innerHTML = '<option value="">全部</option>';
+    categoryIdSelect.innerHTML = '';
+    categories.forEach(category => {
+      const option1 = document.createElement('option');
+      option1.value = category.id;
+      option1.textContent = category.categoryName;
+      categoryFilter.appendChild(option1);
+
+      const option2 = document.createElement('option');
+      option2.value = category.id;
+      option2.textContent = category.categoryName;
+      categoryIdSelect.appendChild(option2);
+    });
+  }
+
+  async function loadData() {
+    const [categoriesRes, websitesRes] = await Promise.all([
+      apiFetch('/api/admin/categories'),
+      apiFetch('/api/admin/websites?page=1&size=1000'),
+    ]);
+
+    if (categoriesRes.code !== 0 || websitesRes.code !== 0) {
+      alert(categoriesRes.message || websitesRes.message);
+      return;
+    }
+
+    categories = categoriesRes.data;
+    const websites = websitesRes.data.list;
+    renderCategoriesSelect();
+
+    const list = document.getElementById('websiteList');
+    list.innerHTML = '';
+    sortables.forEach(s => s.destroy());
+    sortables = [];
+
+    categories.forEach(category => {
+      const categoryWebsites = websites.filter(w => w.categoryId === category.id);
+      const section = document.createElement('div');
+      section.className = 'mb-6';
+      section.innerHTML = `<h3 class="text-lg font-medium text-gray-900 mb-2">${category.categoryName}</h3>`;
+      const group = document.createElement('div');
+      group.className = 'space-y-2 website-group';
+      group.dataset.categoryId = category.id;
+      categoryWebsites.forEach(website => {
+        group.appendChild(createWebsiteElement(website));
+      });
+      section.appendChild(group);
+      list.appendChild(section);
+
+      const sortable = Sortable.create(group, {
+        animation: 150,
+        handle: '.website-item',
+        ghostClass: 'sortable-ghost',
+        group: {
+          name: 'websites',
+          pull: false,
+          put: false,
+        },
+        onEnd: async () => {
+          const categoryId = group.dataset.categoryId;
+          const ids = Array.from(group.querySelectorAll('.website-item')).map(el => parseInt(el.dataset.id, 10));
+          const data = await apiFetch(`/api/admin/categories/${categoryId}/websites/order`, {
+            method: 'PUT',
+            body: JSON.stringify({ ids }),
+          });
+          if (data.code !== 0) {
+            alert(data.message || '排序保存失败');
+            loadData();
+          }
+        },
+      });
+      sortables.push(sortable);
+    });
+
+    bindEvents();
+  }
+
+  function bindEvents() {
+    document.querySelectorAll('.edit-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const website = JSON.parse(btn.dataset.website);
+        openWebsiteModal(website);
+      });
+    });
+
+    document.querySelectorAll('.delete-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        if (!confirm('确定删除该网站吗？')) return;
+        const data = await apiFetch(`/api/admin/websites/${btn.dataset.id}`, { method: 'DELETE' });
+        if (data.code === 0) {
+          loadData();
+        } else {
+          alert(data.message);
+        }
+      });
+    });
+  }
 
   function openWebsiteModal(website = null) {
     editingWebsiteId = website ? website.id : null;
@@ -174,7 +268,7 @@
 
       if (data.code === 0) {
         closeWebsiteModal();
-        window.location.reload();
+        loadData();
       } else {
         websiteModalError.textContent = data.message;
         websiteModalError.classList.remove('hidden');
@@ -185,25 +279,6 @@
     }
   });
 
-  document.querySelectorAll('.edit-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const website = JSON.parse(btn.dataset.website);
-      openWebsiteModal(website);
-    });
-  });
-
-  document.querySelectorAll('.delete-btn').forEach(btn => {
-    btn.addEventListener('click', async () => {
-      if (!confirm('确定删除该网站吗？')) return;
-      const data = await apiFetch(`/api/admin/websites/${btn.dataset.id}`, { method: 'DELETE' });
-      if (data.code === 0) {
-        window.location.reload();
-      } else {
-        alert(data.message);
-      }
-    });
-  });
-
   document.getElementById('categoryFilter').addEventListener('change', (e) => {
     const categoryId = e.target.value;
     document.querySelectorAll('.website-group').forEach(group => {
@@ -212,28 +287,5 @@
     });
   });
 
-  document.querySelectorAll('.website-group').forEach(group => {
-    Sortable.create(group, {
-      animation: 150,
-      handle: '.website-item',
-      ghostClass: 'sortable-ghost',
-      group: {
-        name: 'websites',
-        pull: false,
-        put: false,
-      },
-      onEnd: async () => {
-        const categoryId = group.dataset.categoryId;
-        const ids = Array.from(group.querySelectorAll('.website-item')).map(el => parseInt(el.dataset.id, 10));
-        const data = await apiFetch(`/api/admin/categories/${categoryId}/websites/order`, {
-          method: 'PUT',
-          body: JSON.stringify({ ids }),
-        });
-        if (data.code !== 0) {
-          alert(data.message || '排序保存失败');
-          window.location.reload();
-        }
-      },
-    });
-  });
+  loadData();
 </script>

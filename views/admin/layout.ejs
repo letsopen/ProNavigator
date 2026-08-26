@@ -11,6 +11,14 @@
   <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
 </head>
 <body class="bg-gray-100 min-h-screen">
+  <script>
+    (function() {
+      const token = localStorage.getItem('nav_token');
+      if (!token) {
+        window.location.href = '/admin/login';
+      }
+    })();
+  </script>
   <nav class="bg-white shadow-sm">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between h-16">

@@ -16,11 +16,7 @@ function login(req, res, next) {
   try {
     const { username, password } = req.body;
     const result = adminService.login(username, password);
-    res.cookie('nav_token', result.token, {
-      httpOnly: true,
-      maxAge: 2 * 60 * 60 * 1000, // 2 小时
-      sameSite: 'lax',
-    });
+
     sendSuccess(res, result, '登录成功');
   } catch (err) {
     next(err);
@@ -44,7 +40,7 @@ function logout(req, res, next) {
     if (token) {
       adminService.logout(token);
     }
-    res.clearCookie('nav_token');
+
     sendSuccess(res, null, '登出成功');
   } catch (err) {
     next(err);

@@ -7,20 +7,6 @@
   </div>
 
   <div id="categoryList" class="space-y-2">
-    <% categories.forEach(function(category) { %>
-      <div class="category-item flex items-center justify-between p-3 bg-gray-50 rounded-md cursor-move" data-id="<%= category.id %>">
-        <div class="flex items-center">
-          <svg class="w-5 h-5 text-gray-400 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-          </svg>
-          <span class="font-medium text-gray-900"><%= category.categoryName %></span>
-        </div>
-        <div class="flex items-center space-x-2">
-          <button class="edit-btn text-blue-600 hover:text-blue-800 text-sm" data-id="<%= category.id %>" data-name="<%= category.categoryName %>">编辑</button>
-          <button class="delete-btn text-red-600 hover:text-red-800 text-sm" data-id="<%= category.id %>">删除</button>
-        </div>
-      </div>
-    <% }) %>
   </div>
 </div>
 
@@ -38,10 +24,90 @@
 
 <script>
   let editingId = null;
+  let sortable = null;
   const modal = document.getElementById('categoryModal');
   const modalTitle = document.getElementById('modalTitle');
   const categoryNameInput = document.getElementById('categoryName');
   const modalError = document.getElementById('modalError');
+
+  function createCategoryElement(category) {
+    const div = document.createElement('div');
+    div.className = 'category-item flex items-center justify-between p-3 bg-gray-50 rounded-md cursor-move';
+    div.dataset.id = category.id;
+    div.innerHTML = `
+      <div class="flex items-center">
+        <svg class="w-5 h-5 text-gray-400 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+        <span class="font-medium text-gray-900">${category.categoryName}</span>
+      </div>
+      <div class="flex items-center space-x-2">
+        <button class="edit-btn text-blue-600 hover:text-blue-800 text-sm" data-id="${category.id}" data-name="${category.categoryName}">编辑</button>
+        <button class="delete-btn text-red-600 hover:text-red-800 text-sm" data-id="${category.id}">删除</button>
+      </div>
+    `;
+    return div;
+  }
+
+  async function loadCategories() {
+    const data = await apiFetch('/api/admin/categories');
+    if (data.code !== 0) {
+      alert(data.message);
+      return;
+    }
+
+    const list = document.getElementById('categoryList');
+    list.innerHTML = '';
+    data.data.forEach(category => {
+      list.appendChild(createCategoryElement(category));
+    });
+
+    bindEvents();
+    initSortable();
+  }
+
+  function bindEvents() {
+    document.querySelectorAll('.edit-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        editingId = btn.dataset.id;
+        openModal('编辑分类', btn.dataset.name);
+      });
+    });
+
+    document.querySelectorAll('.delete-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        if (!confirm('确定删除该分类吗？')) return;
+        const result = await apiFetch(`/api/admin/categories/${btn.dataset.id}`, { method: 'DELETE' });
+        if (result.code === 0) {
+          loadCategories();
+        } else {
+          alert(result.message);
+        }
+      });
+    });
+  }
+
+  function initSortable() {
+    if (sortable) {
+      sortable.destroy();
+    }
+    sortable = Sortable.create(document.getElementById('categoryList'), {
+      animation: 150,
+      handle: '.category-item',
+      ghostClass: 'sortable-ghost',
+      onEnd: async () => {
+        const ids = Array.from(document.querySelectorAll('.category-item')).map(el => parseInt(el.dataset.id, 10));
+        const data = await apiFetch('/api/admin/categories/order', {
+          method: 'PUT',
+          body: JSON.stringify({ ids }),
+        });
+        if (data.code !== 0) {
+          alert(data.message || '排序保存失败');
+          loadCategories();
+        }
+      },
+    });
+  }
 
   function openModal(title, name = '') {
     modalTitle.textContent = title;
@@ -80,46 +146,12 @@
 
     if (data.code === 0) {
       closeModal();
-      window.location.reload();
+      loadCategories();
     } else {
       modalError.textContent = data.message;
       modalError.classList.remove('hidden');
     }
   });
 
-  document.querySelectorAll('.edit-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      editingId = btn.dataset.id;
-      openModal('编辑分类', btn.dataset.name);
-    });
-  });
-
-  document.querySelectorAll('.delete-btn').forEach(btn => {
-    btn.addEventListener('click', async () => {
-      if (!confirm('确定删除该分类吗？')) return;
-      const data = await apiFetch(`/api/admin/categories/${btn.dataset.id}`, { method: 'DELETE' });
-      if (data.code === 0) {
-        window.location.reload();
-      } else {
-        alert(data.message);
-      }
-    });
-  });
-
-  const sortable = Sortable.create(document.getElementById('categoryList'), {
-    animation: 150,
-    handle: '.category-item',
-    ghostClass: 'sortable-ghost',
-    onEnd: async () => {
-      const ids = Array.from(document.querySelectorAll('.category-item')).map(el => parseInt(el.dataset.id, 10));
-      const data = await apiFetch('/api/admin/categories/order', {
-        method: 'PUT',
-        body: JSON.stringify({ ids }),
-      });
-      if (data.code !== 0) {
-        alert(data.message || '排序保存失败');
-        window.location.reload();
-      }
-    },
-  });
+  loadCategories();
 </script>
