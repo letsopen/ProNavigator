@@ -17,7 +17,7 @@ WORKDIR /app
 
 # 安装生产依赖
 COPY package*.json ./
-RUN npm ci --only=production --no-audit --no-fund
+RUN npm ci --omit=dev --ignore-scripts --no-audit --no-fund
 
 # 复制应用代码与构建产物
 COPY . .

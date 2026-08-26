@@ -11,8 +11,8 @@
     "test:integration": "jest tests/integration --runInBand",
     "lint": "eslint src tests --ext .js && cd web && npm run lint",
     "lint:fix": "eslint src tests --ext .js --fix && cd web && npm run lint:fix",
-    "build:web": "cd web && npm run build",
-    "postinstall": "cd web && npm install"
+    "install:web": "cd web && npm install",
+    "build:web": "cd web && npm run build"
   },
   "engines": {
     "node": ">=20.0.0"
