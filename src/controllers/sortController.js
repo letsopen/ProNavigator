@@ -6,12 +6,12 @@ const { sendSuccess, AppError } = require('../utils/response');
 
 const categorySortRules = [
   body('ids').isArray({ min: 1 }).withMessage('排序 ID 数组不能为空'),
-  body('ids.*').isInt().withMessage('所有 ID 必须为整数'),
+  body('ids.*').isInt().withMessage('所有 ID 必须为整数').toInt(),
 ];
 
 const websiteSortRules = [
   body('ids').isArray({ min: 1 }).withMessage('排序 ID 数组不能为空'),
-  body('ids.*').isInt().withMessage('所有 ID 必须为整数'),
+  body('ids.*').isInt().withMessage('所有 ID 必须为整数').toInt(),
 ];
 
 function sortCategories(req, res, next) {

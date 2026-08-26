@@ -36,38 +36,29 @@
             >
               <el-card
                 shadow="hover"
+                class="website-card"
                 @click="openWebsite(website.url)"
               >
-                <div class="website-header">
+                <div class="website-logo">
                   <el-avatar
                     v-if="website.logo"
                     :src="website.logo"
                     :size="40"
+                    shape="square"
                   />
                   <el-avatar
                     v-else
                     :size="40"
+                    shape="square"
                   >
                     {{ website.websiteName.charAt(0) }}
                   </el-avatar>
+                </div>
+                <div class="website-title">
                   <el-text truncated>
                     {{ website.websiteName }}
                   </el-text>
                 </div>
-                <el-space>
-                  <el-link
-                    type="primary"
-                    @click.stop="openWebsite(website.url)"
-                  >
-                    访问网站
-                  </el-link>
-                  <el-link
-                    type="info"
-                    @click.stop="goDetail(website.id)"
-                  >
-                    详情
-                  </el-link>
-                </el-space>
               </el-card>
             </el-col>
           </el-row>
@@ -81,10 +72,8 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
 import { ElMessage } from 'element-plus';
 
-const router = useRouter();
 const categories = ref([]);
 const empty = ref(false);
 
@@ -107,9 +96,6 @@ function openWebsite(url) {
   window.open(url, '_blank');
 }
 
-function goDetail(id) {
-  router.push(`/website/${id}`);
-}
 
 onMounted(loadHomeData);
 </script>
@@ -118,10 +104,41 @@ onMounted(loadHomeData);
 .category-card {
   margin-bottom: 20px;
 }
-.website-header {
+.website-card {
+  aspect-ratio: 4 / 1;
+  display: flex;
+  align-items: stretch;
+  padding: 0;
+  overflow: hidden;
+  cursor: pointer;
+}
+.website-card :deep(.el-card__body) {
+  display: flex;
+  width: 100%;
+  padding: 0;
+}
+.website-logo {
+  flex: 0 0 25%;
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 12px;
+  justify-content: center;
+  border-right: 1px solid #e4e7ed;
+}
+.website-logo :deep(.el-avatar) {
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+.website-title {
+  flex: 0 0 75%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 12px;
+  box-sizing: border-box;
+}
+.website-title .el-text {
+  font-size: 16px;
+  font-weight: 500;
+  text-align: center;
 }
 </style>
