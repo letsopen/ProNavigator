@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('path');
 const morgan = require('morgan');
+const cookieParser = require('cookie-parser');
 const engine = require('ejs-mate');
 const config = require('./config');
 const { initDb } = require('./models/db');
@@ -24,6 +25,9 @@ app.use('/js', express.static(path.join(__dirname, '..', 'public', 'js')));
 
 // 请求日志
 app.use(morgan('combined', { stream: { write: msg => logger.info(msg.trim()) } }));
+
+// Cookie 解析
+app.use(cookieParser());
 
 // 解析请求体
 app.use(express.json({ limit: '10mb' }));

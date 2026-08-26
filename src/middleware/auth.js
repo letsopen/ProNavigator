@@ -3,9 +3,16 @@ const config = require('../config');
 const { sendError } = require('../utils/response');
 const logger = require('../utils/logger');
 
-function authenticateToken(req, res, next) {
+function extractToken(req) {
   const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
+  if (authHeader) {
+    return authHeader.split(' ')[1];
+  }
+  return req.cookies && req.cookies.nav_token ? req.cookies.nav_token : null;
+}
+
+function authenticateToken(req, res, next) {
+  const token = extractToken(req);
 
   if (!token) {
     return sendError(res, '未提供认证令牌', 1005, 401);
