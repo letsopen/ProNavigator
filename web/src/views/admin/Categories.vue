@@ -18,7 +18,6 @@
         v-loading="loading"
         row-key="id"
         :data="categories"
-        style="width: 100%"
       >
         <el-table-column
           prop="categoryName"

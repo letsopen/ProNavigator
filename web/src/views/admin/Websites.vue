@@ -27,19 +27,19 @@
         />
       </el-select>
 
-      <div
+      <el-card
         v-for="category in filteredCategories"
         :key="category.id"
-        class="category-section"
+        shadow="never"
+        class="category-card"
       >
-        <h3 class="category-title">
-          {{ category.categoryName }}
-        </h3>
+        <template #header>
+          <span>{{ category.categoryName }}</span>
+        </template>
         <el-table
           :ref="el => setTableRef(el, category.id)"
           :data="category.websites"
           row-key="id"
-          style="width: 100%"
         >
           <el-table-column
             label="Logo"
@@ -90,7 +90,7 @@
             </template>
           </el-table-column>
         </el-table>
-      </div>
+      </el-card>
     </el-card>
 
     <el-dialog
@@ -359,14 +359,7 @@ onMounted(loadData);
   margin-bottom: 16px;
   width: 240px;
 }
-.category-section {
-  margin-bottom: 24px;
-}
-.category-title {
-  font-size: 16px;
-  font-weight: 600;
-  margin-bottom: 12px;
-  padding-left: 12px;
-  border-left: 4px solid #409eff;
+.category-card {
+  margin-bottom: 16px;
 }
 </style>

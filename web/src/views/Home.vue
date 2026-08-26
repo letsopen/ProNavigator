@@ -1,28 +1,31 @@
 <template>
-  <div class="home-container">
-    <el-header class="home-header">
-      <div class="header-inner">
-        <h1>ProNavigator</h1>
-        <p>快速访问常用内部系统</p>
-      </div>
+  <el-container direction="vertical">
+    <el-header>
+      <el-page-header
+        title="ProNavigator"
+        content="快速访问常用内部系统"
+        @back="() => {}"
+      />
     </el-header>
 
-    <main class="main-content">
+    <el-main>
       <el-empty
         v-if="empty"
         description="暂无导航内容，请联系管理员"
       />
 
       <div v-else>
-        <div
+        <el-card
           v-for="category in categories"
           :key="category.id"
-          class="category-block"
+          class="category-card"
+          shadow="never"
         >
-          <h2 class="category-title">
-            {{ category.categoryName }}
-          </h2>
-          <el-row :gutter="16">
+          <template #header>
+            <span>{{ category.categoryName }}</span>
+          </template>
+
+          <el-row :gutter="20">
             <el-col
               v-for="website in category.websites"
               :key="website.id"
@@ -32,7 +35,6 @@
               :lg="6"
             >
               <el-card
-                class="website-card"
                 shadow="hover"
                 @click="openWebsite(website.url)"
               >
@@ -48,34 +50,33 @@
                   >
                     {{ website.websiteName.charAt(0) }}
                   </el-avatar>
-                  <span class="website-name">{{ website.websiteName }}</span>
+                  <el-text truncated>
+                    {{ website.websiteName }}
+                  </el-text>
                 </div>
-                <div class="website-actions">
-                  <el-button
+                <el-space>
+                  <el-link
                     type="primary"
-                    link
                     @click.stop="openWebsite(website.url)"
                   >
                     访问网站
-                  </el-button>
-                  <el-button
-                    link
+                  </el-link>
+                  <el-link
+                    type="info"
                     @click.stop="goDetail(website.id)"
                   >
                     详情
-                  </el-button>
-                </div>
+                  </el-link>
+                </el-space>
               </el-card>
             </el-col>
           </el-row>
-        </div>
+        </el-card>
       </div>
-    </main>
+    </el-main>
 
-    <footer class="home-footer">
-      <p>ProNavigator</p>
-    </footer>
-  </div>
+    <el-footer>ProNavigator</el-footer>
+  </el-container>
 </template>
 
 <script setup>
@@ -114,71 +115,13 @@ onMounted(loadHomeData);
 </script>
 
 <style scoped>
-.home-container {
-  min-height: 100vh;
-  background-color: #f5f7fa;
-}
-.home-header {
-  background-color: #fff;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
-  height: auto;
-  padding: 24px 0;
-}
-.header-inner {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 0 24px;
-}
-.home-header h1 {
-  margin: 0 0 8px;
-  font-size: 24px;
-}
-.home-header p {
-  margin: 0;
-  color: #606266;
-}
-.main-content {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 24px;
-}
-.category-block {
-  margin-bottom: 32px;
-}
-.category-title {
-  font-size: 16px;
-  font-weight: 600;
-  margin-bottom: 16px;
-  padding-left: 12px;
-  border-left: 4px solid #409eff;
-}
-.website-card {
-  cursor: pointer;
-  margin-bottom: 16px;
+.category-card {
+  margin-bottom: 20px;
 }
 .website-header {
   display: flex;
   align-items: center;
   gap: 12px;
   margin-bottom: 12px;
-}
-.website-name {
-  font-weight: 500;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.website-actions {
-  display: flex;
-  gap: 8px;
-}
-.home-footer {
-  background-color: #fff;
-  border-top: 1px solid #e4e7ed;
-  margin-top: 48px;
-  padding: 16px 0;
-  text-align: center;
-  color: #909399;
-  font-size: 14px;
 }
 </style>

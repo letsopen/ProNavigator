@@ -1,18 +1,19 @@
 <template>
-  <div class="login-container">
+  <el-container class="login-container">
     <el-card
       class="login-card"
       shadow="always"
     >
-      <h1 class="login-title">
-        管理员登录
-      </h1>
+      <template #header>
+        <div class="card-header">
+          管理员登录
+        </div>
+      </template>
       <el-form
         ref="form"
         :model="formData"
         :rules="rules"
         label-position="top"
-        @submit.prevent="onSubmit"
       >
         <el-form-item
           label="用户名"
@@ -36,16 +37,15 @@
         <el-form-item>
           <el-button
             type="primary"
-            native-type="submit"
             :loading="submitting"
-            class="w-full"
+            @click="onSubmit"
           >
             登录
           </el-button>
         </el-form-item>
       </el-form>
     </el-card>
-  </div>
+  </el-container>
 </template>
 
 <script setup>
@@ -93,23 +93,17 @@ async function onSubmit() {
 
 <style scoped>
 .login-container {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
   justify-content: center;
-  background-color: #f5f7fa;
+  align-items: center;
+  min-height: 100vh;
 }
 .login-card {
   width: 100%;
   max-width: 420px;
 }
-.login-title {
-  font-size: 24px;
+.card-header {
+  font-size: 18px;
   font-weight: bold;
   text-align: center;
-  margin-bottom: 24px;
-}
-.w-full {
-  width: 100%;
 }
 </style>
