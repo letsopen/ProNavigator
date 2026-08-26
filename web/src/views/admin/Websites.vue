@@ -139,10 +139,12 @@
           </el-checkbox>
         </el-form-item>
         <el-form-item label="说明">
-          <div
-            id="editor"
-            style="height: 300px;"
-          />
+          <div class="editor-wrapper">
+            <div
+              id="editor"
+              style="height: 300px;"
+            />
+          </div>
         </el-form-item>
       </el-form>
       <template #footer>
@@ -361,5 +363,14 @@ onMounted(loadData);
 }
 .category-card {
   margin-bottom: 16px;
+}
+.editor-wrapper {
+  width: 100%;
+}
+.editor-wrapper :deep(.toastui-editor-defaultUI) {
+  min-width: auto;
+}
+.editor-wrapper :deep(.toastui-editor-toolbar) {
+  flex-wrap: wrap;
 }
 </style>
