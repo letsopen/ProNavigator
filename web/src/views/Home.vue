@@ -25,68 +25,73 @@
       </div>
     </el-header>
 
-    <el-main class="pn-container main-content">
-      <el-empty
-        v-if="empty"
-        description="暂无导航内容，请联系管理员"
-      />
+    <el-main class="main-content">
+      <div class="pn-container main-inner">
+        <el-empty
+          v-if="empty"
+          description="暂无导航内容，请联系管理员"
+        />
 
-      <div v-else>
-        <el-card
-          v-for="category in categories"
-          :key="category.id"
-          class="category-card"
-          shadow="never"
-        >
-          <template #header>
-            <span class="category-title">{{ category.categoryName }}</span>
-          </template>
+        <div v-else>
+          <el-card
+            v-for="category in categories"
+            :key="category.id"
+            class="category-card"
+            shadow="never"
+          >
+            <template #header>
+              <span class="category-title">{{ category.categoryName }}</span>
+            </template>
 
-          <el-row :gutter="20">
-            <el-col
-              v-for="website in category.websites"
-              :key="website.id"
-              :xs="24"
-              :sm="12"
-              :md="8"
-              :lg="6"
-            >
-              <el-card
-                shadow="hover"
-                class="website-card"
-                @click="openWebsite(website.url)"
+            <el-row :gutter="20">
+              <el-col
+                v-for="website in category.websites"
+                :key="website.id"
+                :xs="24"
+                :sm="12"
+                :md="8"
+                :lg="6"
               >
-                <div class="website-logo">
-                  <el-avatar
-                    v-if="website.logo"
-                    :src="website.logo"
-                    :size="40"
-                    shape="square"
-                  />
-                  <el-avatar
-                    v-else
-                    :size="40"
-                    shape="square"
-                  >
-                    {{ website.websiteName.charAt(0) }}
-                  </el-avatar>
-                </div>
-                <div class="website-title">
-                  <el-text truncated>
-                    {{ website.websiteName }}
-                  </el-text>
-                </div>
-              </el-card>
-            </el-col>
-          </el-row>
-        </el-card>
+                <el-card
+                  shadow="hover"
+                  class="website-card"
+                  @click="openWebsite(website.url)"
+                >
+                  <div class="website-logo">
+                    <el-avatar
+                      v-if="website.logo"
+                      :src="website.logo"
+                      :size="40"
+                      shape="square"
+                    />
+                    <el-avatar
+                      v-else
+                      :size="40"
+                      shape="square"
+                    >
+                      {{ website.websiteName.charAt(0) }}
+                    </el-avatar>
+                  </div>
+                  <div class="website-title">
+                    <el-text truncated>
+                      {{ website.websiteName }}
+                    </el-text>
+                  </div>
+                </el-card>
+              </el-col>
+            </el-row>
+          </el-card>
+        </div>
       </div>
     </el-main>
 
-    <el-footer class="home-footer">
-      <el-link @click="goAdmin">
-        管理后台
-      </el-link>
+    <el-footer class="home-footer pn-glass">
+      <div class="pn-container footer-inner">
+        <span class="footer-text">ProNavigator 内部导航系统</span>
+        <el-link @click="goAdmin">
+          管理后台
+        </el-link>
+      </div>
     </el-footer>
   </el-container>
 </template>
@@ -174,8 +179,12 @@ onMounted(loadHomeData);
   line-height: 1.4;
 }
 .main-content {
-  padding-top: 32px;
-  padding-bottom: 80px;
+  width: 100%;
+  padding: 32px 0 80px;
+  overflow-x: hidden;
+}
+.main-inner {
+  box-sizing: border-box;
 }
 .category-card {
   margin-bottom: 24px;
@@ -233,8 +242,18 @@ onMounted(loadHomeData);
   color: var(--pn-text-secondary);
 }
 .home-footer {
-  padding: 16px;
-  text-align: center;
-  background: transparent;
+  padding: 0;
+  height: auto;
+  border-top: 1px solid var(--pn-border-color);
+}
+.footer-inner {
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.footer-text {
+  font-size: 13px;
+  color: var(--pn-text-muted);
 }
 </style>
