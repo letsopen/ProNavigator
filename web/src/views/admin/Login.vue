@@ -14,7 +14,8 @@
           ref="form"
           :model="formData"
           :rules="rules"
-          label-position="top"
+          label-position="right"
+          label-width="80px"
         >
           <el-form-item
             label="用户名"
@@ -35,7 +36,7 @@
               placeholder="请输入密码"
             />
           </el-form-item>
-          <el-form-item>
+          <el-form-item class="submit-item">
             <el-button
               type="primary"
               :loading="submitting"
@@ -139,5 +140,8 @@ async function onSubmit() {
 .login-footer {
   padding: 16px;
   text-align: center;
+}
+.submit-item :deep(.el-form-item__content) {
+  justify-content: center;
 }
 </style>
