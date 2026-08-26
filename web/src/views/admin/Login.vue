@@ -49,7 +49,7 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue';
+import { ref, reactive, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { ElMessage } from 'element-plus';
 
@@ -62,6 +62,13 @@ const rules = {
   username: [{ required: true, message: '用户名不能为空', trigger: 'blur' }],
   password: [{ required: true, message: '密码不能为空', trigger: 'blur' }],
 };
+
+onMounted(() => {
+  const token = localStorage.getItem('nav_token');
+  if (token) {
+    router.push('/admin/categories');
+  }
+});
 
 async function onSubmit() {
   const valid = await form.value.validate().catch(() => false);
@@ -96,13 +103,15 @@ async function onSubmit() {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
 }
 .login-card {
   width: 100%;
   max-width: 420px;
+  border-radius: 12px;
 }
 .card-header {
-  font-size: 18px;
+  font-size: 20px;
   font-weight: bold;
   text-align: center;
 }

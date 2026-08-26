@@ -66,7 +66,17 @@
       </div>
     </el-main>
 
-    <el-footer>ProNavigator</el-footer>
+    <el-footer>
+      <div class="footer-content">
+        <span>ProNavigator</span>
+        <el-link
+          type="primary"
+          @click="goAdmin"
+        >
+          管理后台
+        </el-link>
+      </div>
+    </el-footer>
   </el-container>
 </template>
 
@@ -96,6 +106,9 @@ function openWebsite(url) {
   window.open(url, '_blank');
 }
 
+function goAdmin() {
+  window.location.href = '/admin/login';
+}
 
 onMounted(loadHomeData);
 </script>
@@ -140,5 +153,12 @@ onMounted(loadHomeData);
   font-size: 16px;
   font-weight: 500;
   text-align: center;
+}
+.footer-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  height: 100%;
 }
 </style>
