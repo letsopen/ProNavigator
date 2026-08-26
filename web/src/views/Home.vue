@@ -8,7 +8,7 @@
       />
     </el-header>
 
-    <el-main>
+    <el-main class="main-content">
       <el-empty
         v-if="empty"
         description="暂无导航内容，请联系管理员"
@@ -66,7 +66,7 @@
       </div>
     </el-main>
 
-    <el-footer>
+    <el-footer class="fixed-footer">
       <div class="footer-content">
         <el-link
           type="primary"
@@ -157,7 +157,18 @@ onMounted(loadHomeData);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 16px;
   height: 100%;
+}
+.main-content {
+  padding-bottom: 50px;
+}
+.fixed-footer {
+  position: fixed;
+  bottom: 15px;
+  left: 0;
+  right: 0;
+  height: auto;
+  border-top: none;
+  background: transparent;
 }
 </style>

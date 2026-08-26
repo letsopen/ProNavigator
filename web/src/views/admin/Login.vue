@@ -14,30 +14,29 @@
           ref="form"
           :model="formData"
           :rules="rules"
-          label-position="right"
-          label-width="80px"
         >
           <el-form-item
-            label="用户名"
             prop="username"
           >
             <el-input
               v-model="formData.username"
-              placeholder="请输入用户名"
+              class="login-input"
+              placeholder="用户名"
             />
           </el-form-item>
           <el-form-item
-            label="密码"
             prop="password"
           >
             <el-input
               v-model="formData.password"
+              class="login-input"
               type="password"
-              placeholder="请输入密码"
+              placeholder="密码"
             />
           </el-form-item>
           <el-form-item class="submit-item">
             <el-button
+              class="login-button"
               type="primary"
               :loading="submitting"
               @click="onSubmit"
@@ -143,5 +142,13 @@ async function onSubmit() {
 }
 .submit-item :deep(.el-form-item__content) {
   justify-content: center;
+}
+.login-input :deep(.el-input__inner) {
+  height: 40px;
+  line-height: 40px;
+}
+.login-button {
+  width: 150px;
+  height: 40px;
 }
 </style>

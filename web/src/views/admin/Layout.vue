@@ -31,11 +31,11 @@
       </el-menu>
     </el-header>
 
-    <el-main>
+    <el-main class="main-content">
       <slot />
     </el-main>
 
-    <el-footer>
+    <el-footer class="fixed-footer">
       <div class="footer-content">
         <el-link
           type="primary"
@@ -98,5 +98,17 @@ async function logout() {
   align-items: center;
   justify-content: center;
   height: 100%;
+}
+.main-content {
+  padding-bottom: 50px;
+}
+.fixed-footer {
+  position: fixed;
+  bottom: 15px;
+  left: 0;
+  right: 0;
+  height: auto;
+  border-top: none;
+  background: transparent;
 }
 </style>
