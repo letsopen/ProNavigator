@@ -1,5 +1,6 @@
 const express = require('express');
 const path = require('path');
+const fs = require('fs');
 const morgan = require('morgan');
 
 const config = require('./config');
@@ -40,8 +41,12 @@ app.use('/api', (req, res, next) => {
 });
 
 // 前端 history fallback
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'public', 'dist', 'index.html'));
+app.get('*', (req, res, next) => {
+  const indexPath = path.join(__dirname, '..', 'public', 'dist', 'index.html');
+  if (!fs.existsSync(indexPath)) {
+    return next(new AppError('前端构建产物不存在，请先执行 npm run build:web', 5001, 503));
+  }
+  res.sendFile(indexPath);
 });
 
 // 错误处理
