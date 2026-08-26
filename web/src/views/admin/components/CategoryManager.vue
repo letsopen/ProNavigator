@@ -24,6 +24,7 @@
         label="分类名称"
       />
       <el-table-column
+        v-if="showSort"
         prop="displayOrder"
         label="排序"
         width="80"
@@ -88,6 +89,13 @@ import { ref, onMounted, reactive, computed, nextTick, inject } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import Sortable from 'sortablejs';
 import { useApi } from '../../../composables/useApi.js';
+
+defineProps({
+  showSort: {
+    type: Boolean,
+    default: true,
+  },
+});
 
 const events = inject('adminEventBus', null);
 

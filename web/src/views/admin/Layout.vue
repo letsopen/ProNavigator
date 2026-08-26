@@ -21,16 +21,10 @@
           class="admin-menu"
         >
           <el-menu-item
-            index="websites"
-            @click="switchTab('websites')"
+            index="content"
+            @click="switchTab('content')"
           >
-            网站管理
-          </el-menu-item>
-          <el-menu-item
-            index="categories"
-            @click="switchTab('categories')"
-          >
-            分类管理
+            内容管理
           </el-menu-item>
           <el-menu-item
             index="audit-logs"
@@ -77,8 +71,8 @@ const router = useRouter();
 
 const activeTab = computed(() => {
   const tab = route.query.tab;
-  if (tab === 'categories' || tab === 'audit-logs' || tab === 'websites') return tab;
-  return 'websites';
+  if (tab === 'content' || tab === 'audit-logs') return tab;
+  return 'content';
 });
 
 function switchTab(tab) {

@@ -1,7 +1,6 @@
 <template>
   <Layout>
-    <WebsiteManager v-if="activeTab === 'websites'" />
-    <CategoryManager v-else-if="activeTab === 'categories'" />
+    <ContentManager v-if="activeTab === 'content'" />
     <AuditLogManager v-else />
   </Layout>
 </template>
@@ -10,16 +9,15 @@
 import { computed, provide, ref, readonly } from 'vue';
 import { useRoute } from 'vue-router';
 import Layout from './Layout.vue';
-import WebsiteManager from './components/WebsiteManager.vue';
-import CategoryManager from './components/CategoryManager.vue';
+import ContentManager from './components/ContentManager.vue';
 import AuditLogManager from './components/AuditLogManager.vue';
 
 const route = useRoute();
 
 const activeTab = computed(() => {
   const tab = route.query.tab;
-  if (tab === 'categories' || tab === 'audit-logs' || tab === 'websites') return tab;
-  return 'websites';
+  if (tab === 'content' || tab === 'audit-logs') return tab;
+  return 'content';
 });
 
 const refreshSignal = ref(0);
