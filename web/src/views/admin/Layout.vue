@@ -32,7 +32,7 @@
     </el-header>
 
     <el-main>
-      <router-view />
+      <slot />
     </el-main>
   </el-container>
 </template>
