@@ -2,7 +2,7 @@
   <Layout>
     <el-card>
       <template #header>
-        <div class="card-header">
+        <div class="pn-card-header">
           <span>网站管理</span>
           <el-button
             type="primary"
@@ -352,11 +352,6 @@ onMounted(loadData);
 </script>
 
 <style scoped>
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
 .filter-select {
   margin-bottom: 16px;
   width: 240px;

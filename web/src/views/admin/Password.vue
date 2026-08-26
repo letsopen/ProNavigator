@@ -1,56 +1,64 @@
 <template>
   <Layout>
-    <el-card class="password-card">
-      <template #header>
-        <span>修改密码</span>
-      </template>
-      <el-form
-        ref="form"
-        :model="formData"
-        :rules="rules"
-        label-width="100px"
+    <el-row justify="center">
+      <el-col
+        :span="24"
+        :md="12"
+        :lg="10"
       >
-        <el-form-item
-          label="旧密码"
-          prop="oldPassword"
-        >
-          <el-input
-            v-model="formData.oldPassword"
-            type="password"
-            placeholder="请输入旧密码"
-          />
-        </el-form-item>
-        <el-form-item
-          label="新密码"
-          prop="newPassword"
-        >
-          <el-input
-            v-model="formData.newPassword"
-            type="password"
-            placeholder="请输入新密码"
-          />
-        </el-form-item>
-        <el-form-item
-          label="确认新密码"
-          prop="confirmPassword"
-        >
-          <el-input
-            v-model="formData.confirmPassword"
-            type="password"
-            placeholder="请再次输入新密码"
-          />
-        </el-form-item>
-        <el-form-item>
-          <el-button
-            type="primary"
-            :loading="submitting"
-            @click="onSubmit"
+        <el-card>
+          <template #header>
+            <span>修改密码</span>
+          </template>
+          <el-form
+            ref="form"
+            :model="formData"
+            :rules="rules"
+            label-width="100px"
           >
-            保存
-          </el-button>
-        </el-form-item>
-      </el-form>
-    </el-card>
+            <el-form-item
+              label="旧密码"
+              prop="oldPassword"
+            >
+              <el-input
+                v-model="formData.oldPassword"
+                type="password"
+                placeholder="请输入旧密码"
+              />
+            </el-form-item>
+            <el-form-item
+              label="新密码"
+              prop="newPassword"
+            >
+              <el-input
+                v-model="formData.newPassword"
+                type="password"
+                placeholder="请输入新密码"
+              />
+            </el-form-item>
+            <el-form-item
+              label="确认新密码"
+              prop="confirmPassword"
+            >
+              <el-input
+                v-model="formData.confirmPassword"
+                type="password"
+                placeholder="请再次输入新密码"
+              />
+            </el-form-item>
+            <el-form-item>
+              <el-button
+                type="primary"
+                :loading="submitting"
+                @click="onSubmit"
+              >
+                保存
+              </el-button>
+            </el-form-item>
+          </el-form>
+        </el-card>
+      </el-col>
+    </el-row>
   </Layout>
 </template>
 
@@ -117,7 +125,4 @@ async function onSubmit() {
 </script>
 
 <style scoped>
-.password-card {
-  max-width: 560px;
-}
 </style>

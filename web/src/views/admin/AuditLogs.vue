@@ -2,7 +2,7 @@
   <Layout>
     <el-card>
       <template #header>
-        <div class="card-header">
+        <div class="pn-card-header">
           <span>审计日志</span>
         </div>
       </template>
@@ -84,11 +84,6 @@ onMounted(loadLogs);
 </script>
 
 <style scoped>
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
 .pagination {
   margin-top: 16px;
   justify-content: flex-end;

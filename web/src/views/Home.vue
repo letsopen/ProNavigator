@@ -1,14 +1,31 @@
 <template>
-  <el-container direction="vertical">
-    <el-header>
-      <el-page-header
-        title="ProNavigator"
-        content="快速访问常用内部系统"
-        @back="() => {}"
-      />
+  <el-container
+    class="home-page"
+    direction="vertical"
+  >
+    <el-header class="home-header pn-glass">
+      <div class="pn-container header-inner">
+        <div class="logo-area">
+          <el-avatar
+            :size="48"
+            shape="square"
+            class="logo-avatar"
+          >
+            P
+          </el-avatar>
+        </div>
+        <div class="title-area">
+          <h1 class="main-title">
+            ProNavigator
+          </h1>
+          <p class="sub-title">
+            快速访问常用内部系统
+          </p>
+        </div>
+      </div>
     </el-header>
 
-    <el-main class="main-content">
+    <el-main class="pn-container main-content">
       <el-empty
         v-if="empty"
         description="暂无导航内容，请联系管理员"
@@ -22,7 +39,7 @@
           shadow="never"
         >
           <template #header>
-            <span>{{ category.categoryName }}</span>
+            <span class="category-title">{{ category.categoryName }}</span>
           </template>
 
           <el-row :gutter="20">
@@ -66,15 +83,10 @@
       </div>
     </el-main>
 
-    <el-footer class="fixed-footer">
-      <div class="footer-content">
-        <el-link
-          type="primary"
-          @click="goAdmin"
-        >
-          管理后台
-        </el-link>
-      </div>
+    <el-footer class="home-footer">
+      <el-link @click="goAdmin">
+        管理后台
+      </el-link>
     </el-footer>
   </el-container>
 </template>
@@ -113,8 +125,67 @@ onMounted(loadHomeData);
 </script>
 
 <style scoped>
+.home-page {
+  min-height: 100vh;
+  background: radial-gradient(ellipse at top, #18181b 0%, var(--pn-bg-base) 60%);
+}
+.home-header {
+  height: 72px;
+  padding: 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.header-inner {
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+.logo-area {
+  flex: 0 0 25%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.logo-avatar {
+  background: var(--pn-bg-elevated);
+  color: var(--pn-accent);
+  font-weight: 700;
+  border-radius: 10px;
+}
+.title-area {
+  flex: 0 0 75%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.main-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--pn-text-primary);
+  line-height: 1.4;
+}
+.sub-title {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: var(--pn-text-muted);
+  line-height: 1.4;
+}
+.main-content {
+  padding-top: 32px;
+  padding-bottom: 80px;
+}
 .category-card {
-  margin-bottom: 20px;
+  margin-bottom: 24px;
+  background-color: var(--pn-bg-card);
+  border: 1px solid var(--pn-border-color);
+}
+.category-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--pn-text-primary);
 }
 .website-card {
   aspect-ratio: 4 / 1;
@@ -123,6 +194,13 @@ onMounted(loadHomeData);
   padding: 0;
   overflow: hidden;
   cursor: pointer;
+  border: 1px solid transparent;
+  background-color: var(--pn-bg-elevated);
+  transition: border-color 0.2s, transform 0.2s;
+}
+.website-card:hover {
+  border-color: var(--pn-accent);
+  transform: translateY(-2px);
 }
 .website-card :deep(.el-card__body) {
   display: flex;
@@ -134,7 +212,7 @@ onMounted(loadHomeData);
   display: flex;
   align-items: center;
   justify-content: center;
-  border-right: 1px solid #e4e7ed;
+  border-right: 1px solid var(--pn-border-color);
 }
 .website-logo :deep(.el-avatar) {
   border-radius: 8px;
@@ -149,26 +227,14 @@ onMounted(loadHomeData);
   box-sizing: border-box;
 }
 .website-title .el-text {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 500;
   text-align: center;
+  color: var(--pn-text-secondary);
 }
-.footer-content {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-}
-.main-content {
-  padding-bottom: 50px;
-}
-.fixed-footer {
-  position: fixed;
-  bottom: 15px;
-  left: 0;
-  right: 0;
-  height: auto;
-  border-top: none;
+.home-footer {
+  padding: 16px;
+  text-align: center;
   background: transparent;
 }
 </style>

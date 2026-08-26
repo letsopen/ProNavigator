@@ -1,49 +1,60 @@
 <template>
-  <el-container direction="vertical">
-    <el-header>
-      <el-menu
-        :default-active="activeMenu"
-        mode="horizontal"
-        router
-      >
-        <el-menu-item index="/admin/categories">
-          分类管理
-        </el-menu-item>
-        <el-menu-item index="/admin/websites">
-          网站管理
-        </el-menu-item>
-        <el-menu-item index="/admin/audit-logs">
-          审计日志
-        </el-menu-item>
-        <div class="flex-spacer" />
-        <el-menu-item
-          index="/admin/password"
-          @click="goPassword"
+  <el-container
+    class="admin-layout"
+    direction="vertical"
+  >
+    <el-header class="admin-header">
+      <div class="pn-container header-inner">
+        <div class="brand">
+          <el-avatar
+            :size="32"
+            shape="square"
+            class="brand-logo"
+          >
+            P
+          </el-avatar>
+          <span class="brand-name">ProNavigator</span>
+        </div>
+        <el-menu
+          :default-active="activeMenu"
+          mode="horizontal"
+          router
+          class="admin-menu"
         >
-          修改密码
-        </el-menu-item>
-        <el-menu-item
-          index=""
-          @click="logout"
-        >
-          退出登录
-        </el-menu-item>
-      </el-menu>
+          <el-menu-item index="/admin/categories">
+            分类管理
+          </el-menu-item>
+          <el-menu-item index="/admin/websites">
+            网站管理
+          </el-menu-item>
+          <el-menu-item index="/admin/audit-logs">
+            审计日志
+          </el-menu-item>
+          <div class="flex-spacer" />
+          <el-menu-item
+            index="/admin/password"
+            @click="goPassword"
+          >
+            修改密码
+          </el-menu-item>
+          <el-menu-item
+            index=""
+            @click="logout"
+          >
+            退出登录
+          </el-menu-item>
+        </el-menu>
+      </div>
     </el-header>
 
-    <el-main class="main-content">
+    <el-main class="admin-main pn-container">
       <slot />
     </el-main>
 
-    <el-footer class="fixed-footer">
-      <div class="footer-content">
-        <el-link
-          type="primary"
-          @click="goHome"
-        >
-          首页
-        </el-link>
-      </div>
+    <el-footer class="admin-footer">
+      <el-link @click="goHome">
+        返回首页
+      </el-link>
     </el-footer>
   </el-container>
 </template>
@@ -90,25 +101,53 @@ async function logout() {
 </script>
 
 <style scoped>
-.flex-spacer {
-  flex: 1;
+.admin-layout {
+  min-height: 100vh;
+  background: radial-gradient(ellipse at top, #18181b 0%, var(--pn-bg-base) 60%);
 }
-.footer-content {
+.admin-header {
+  height: 64px;
+  padding: 0;
+  background-color: var(--pn-bg-base);
+  border-bottom: 1px solid var(--pn-border-color);
+}
+.header-inner {
+  height: 100%;
   display: flex;
   align-items: center;
-  justify-content: center;
-  height: 100%;
 }
-.main-content {
-  padding-bottom: 50px;
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-right: 48px;
 }
-.fixed-footer {
-  position: fixed;
-  bottom: 15px;
-  left: 0;
-  right: 0;
-  height: auto;
-  border-top: none;
+.brand-logo {
+  background: var(--pn-bg-elevated);
+  color: var(--pn-accent);
+  font-weight: 700;
+  border-radius: 8px;
+}
+.brand-name {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--pn-text-primary);
+}
+.admin-menu {
+  flex: 1;
+  background-color: transparent;
+  border-bottom: none;
+}
+.admin-main {
+  padding-top: 24px;
+  padding-bottom: 24px;
+}
+.admin-footer {
+  padding: 16px;
+  text-align: center;
   background: transparent;
+}
+.flex-spacer {
+  flex: 1;
 }
 </style>

@@ -2,7 +2,7 @@
   <Layout>
     <el-card>
       <template #header>
-        <div class="card-header">
+        <div class="pn-card-header">
           <span>分类管理</span>
           <el-button
             type="primary"
@@ -185,9 +185,4 @@ onMounted(loadCategories);
 </script>
 
 <style scoped>
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
 </style>
