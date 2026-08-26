@@ -30,6 +30,7 @@
           <el-form-item prop="username">
             <el-input
               v-model="formData.username"
+              class="login-input"
               size="large"
               placeholder="用户名"
             />
@@ -37,6 +38,7 @@
           <el-form-item prop="password">
             <el-input
               v-model="formData.password"
+              class="login-input"
               size="large"
               type="password"
               placeholder="密码"
@@ -44,6 +46,7 @@
           </el-form-item>
           <el-form-item class="submit-item">
             <el-button
+              class="login-button"
               size="large"
               type="primary"
               :loading="submitting"
@@ -166,10 +169,28 @@ async function onSubmit() {
   padding: 16px;
   text-align: center;
 }
+.login-input :deep(.el-input__wrapper) {
+  padding: 0;
+  border-radius: 8px;
+}
+.login-input :deep(.el-input__inner) {
+  text-align: center;
+  font-weight: 700;
+}
+.login-button {
+  width: 100%;
+  border-radius: 8px;
+  background-color: #ffffff;
+  border-color: #ffffff;
+  color: #09090b;
+  font-weight: 700;
+}
+.login-button:hover {
+  background-color: #e4e4e7;
+  border-color: #e4e4e7;
+  color: #09090b;
+}
 .submit-item :deep(.el-form-item__content) {
   justify-content: center;
-}
-.submit-item :deep(.el-button) {
-  width: 100%;
 }
 </style>
