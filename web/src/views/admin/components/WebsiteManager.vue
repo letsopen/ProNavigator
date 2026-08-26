@@ -1,165 +1,163 @@
 <template>
-  <Layout>
-    <el-card>
-      <template #header>
-        <div class="pn-card-header">
-          <span>网站管理</span>
-          <el-button
-            type="primary"
-            @click="openDialog()"
-          >
-            新增网站
-          </el-button>
-        </div>
-      </template>
-
-      <el-select
-        v-model="filterCategory"
-        placeholder="按分类筛选"
-        clearable
-        class="filter-select"
-      >
-        <el-option
-          v-for="category in categories"
-          :key="category.id"
-          :value="category.id"
-          :label="category.categoryName"
-        />
-      </el-select>
-
-      <el-card
-        v-for="category in filteredCategories"
-        :key="category.id"
-        shadow="never"
-        class="category-card"
-      >
-        <template #header>
-          <span>{{ category.categoryName }}</span>
-        </template>
-        <el-table
-          :ref="el => setTableRef(el, category.id)"
-          :data="category.websites"
-          row-key="id"
-        >
-          <el-table-column
-            label="Logo"
-            width="80"
-          >
-            <template #default="{ row }">
-              <el-avatar
-                v-if="row.logo"
-                :src="row.logo"
-                :size="32"
-              />
-              <el-avatar
-                v-else
-                :size="32"
-              >
-                {{ row.websiteName.charAt(0) }}
-              </el-avatar>
-            </template>
-          </el-table-column>
-          <el-table-column
-            prop="websiteName"
-            label="网站名称"
-          />
-          <el-table-column
-            prop="url"
-            label="URL"
-            show-overflow-tooltip
-          />
-          <el-table-column
-            label="操作"
-            width="160"
-          >
-            <template #default="{ row }">
-              <el-button
-                type="primary"
-                link
-                @click="openDialog(row)"
-              >
-                编辑
-              </el-button>
-              <el-button
-                type="danger"
-                link
-                @click="remove(row)"
-              >
-                删除
-              </el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-      </el-card>
-    </el-card>
-
-    <el-dialog
-      v-model="visible"
-      :title="dialogTitle"
-      width="800px"
-    >
-      <el-form
-        :model="formData"
-        label-width="80px"
-      >
-        <el-form-item label="网站名称">
-          <el-input
-            v-model="formData.websiteName"
-            maxlength="100"
-          />
-        </el-form-item>
-        <el-form-item label="URL">
-          <el-input v-model="formData.url" />
-        </el-form-item>
-        <el-form-item label="所属分类">
-          <el-select v-model="formData.categoryId">
-            <el-option
-              v-for="category in categories"
-              :key="category.id"
-              :value="category.id"
-              :label="category.categoryName"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="Logo">
-          <el-upload
-            v-model:file-list="fileList"
-            accept="image/*"
-            :auto-upload="false"
-            :limit="1"
-            list-type="picture-card"
-          >
-            <el-icon><Plus /></el-icon>
-          </el-upload>
-          <el-checkbox
-            v-if="editingId && formData.logo"
-            v-model="formData.removeLogo"
-          >
-            删除当前 Logo
-          </el-checkbox>
-        </el-form-item>
-        <el-form-item label="说明">
-          <div class="editor-wrapper">
-            <div
-              id="editor"
-              style="height: 300px;"
-            />
-          </div>
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <el-button @click="visible = false">
-          取消
-        </el-button>
+  <el-card>
+    <template #header>
+      <div class="pn-card-header">
+        <span>网站管理</span>
         <el-button
           type="primary"
-          @click="onConfirm"
+          @click="openDialog()"
         >
-          保存
+          新增网站
         </el-button>
+      </div>
+    </template>
+
+    <el-select
+      v-model="filterCategory"
+      placeholder="按分类筛选"
+      clearable
+      class="filter-select"
+    >
+      <el-option
+        v-for="category in categories"
+        :key="category.id"
+        :value="category.id"
+        :label="category.categoryName"
+      />
+    </el-select>
+
+    <el-card
+      v-for="category in filteredCategories"
+      :key="category.id"
+      shadow="never"
+      class="category-card"
+    >
+      <template #header>
+        <span>{{ category.categoryName }}</span>
       </template>
-    </el-dialog>
-  </Layout>
+      <el-table
+        :ref="el => setTableRef(el, category.id)"
+        :data="category.websites"
+        row-key="id"
+      >
+        <el-table-column
+          label="Logo"
+          width="80"
+        >
+          <template #default="{ row }">
+            <el-avatar
+              v-if="row.logo"
+              :src="row.logo"
+              :size="32"
+            />
+            <el-avatar
+              v-else
+              :size="32"
+            >
+              {{ row.websiteName.charAt(0) }}
+            </el-avatar>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="websiteName"
+          label="网站名称"
+        />
+        <el-table-column
+          prop="url"
+          label="URL"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          label="操作"
+          width="160"
+        >
+          <template #default="{ row }">
+            <el-button
+              type="primary"
+              link
+              @click="openDialog(row)"
+            >
+              编辑
+            </el-button>
+            <el-button
+              type="danger"
+              link
+              @click="remove(row)"
+            >
+              删除
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-card>
+  </el-card>
+
+  <el-dialog
+    v-model="visible"
+    :title="dialogTitle"
+    width="800px"
+  >
+    <el-form
+      :model="formData"
+      label-width="80px"
+    >
+      <el-form-item label="网站名称">
+        <el-input
+          v-model="formData.websiteName"
+          maxlength="100"
+        />
+      </el-form-item>
+      <el-form-item label="URL">
+        <el-input v-model="formData.url" />
+      </el-form-item>
+      <el-form-item label="所属分类">
+        <el-select v-model="formData.categoryId">
+          <el-option
+            v-for="category in categories"
+            :key="category.id"
+            :value="category.id"
+            :label="category.categoryName"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="Logo">
+        <el-upload
+          v-model:file-list="fileList"
+          accept="image/*"
+          :auto-upload="false"
+          :limit="1"
+          list-type="picture-card"
+        >
+          <el-icon><Plus /></el-icon>
+        </el-upload>
+        <el-checkbox
+          v-if="editingId && formData.logo"
+          v-model="formData.removeLogo"
+        >
+          删除当前 Logo
+        </el-checkbox>
+      </el-form-item>
+      <el-form-item label="说明">
+        <div class="editor-wrapper">
+          <div
+            id="editor"
+            style="height: 300px;"
+          />
+        </div>
+      </el-form-item>
+    </el-form>
+    <template #footer>
+      <el-button @click="visible = false">
+        取消
+      </el-button>
+      <el-button
+        type="primary"
+        @click="onConfirm"
+      >
+        保存
+      </el-button>
+    </template>
+  </el-dialog>
 </template>
 
 <script setup>
@@ -167,8 +165,7 @@ import { ref, onMounted, reactive, computed, nextTick } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { Plus } from '@element-plus/icons-vue';
 import Sortable from 'sortablejs';
-import Layout from './Layout.vue';
-import { useApi } from '../../composables/useApi.js';
+import { useApi } from '../../../composables/useApi.js';
 import Editor from '@toast-ui/editor';
 import '@toast-ui/editor/dist/toastui-editor.css';
 

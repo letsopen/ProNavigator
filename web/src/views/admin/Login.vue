@@ -84,7 +84,7 @@ const rules = {
 onMounted(() => {
   const token = localStorage.getItem('nav_token');
   if (token) {
-    router.push('/admin/categories');
+    router.push('/admin');
   }
 });
 
@@ -108,7 +108,7 @@ async function onSubmit() {
     if (data.code === 0) {
       localStorage.setItem('nav_token', data.data.token);
       ElMessage.success('登录成功');
-      router.push('/admin/categories');
+      router.push('/admin');
     } else {
       ElMessage.error(data.message);
     }

@@ -16,29 +16,37 @@
           <span class="brand-name">ProNavigator</span>
         </div>
         <el-menu
-          :default-active="activeMenu"
+          :default-active="activeTab"
           mode="horizontal"
-          router
           class="admin-menu"
         >
-          <el-menu-item index="/admin/categories">
-            分类管理
-          </el-menu-item>
-          <el-menu-item index="/admin/websites">
+          <el-menu-item
+            index="websites"
+            @click="switchTab('websites')"
+          >
             网站管理
           </el-menu-item>
-          <el-menu-item index="/admin/audit-logs">
+          <el-menu-item
+            index="categories"
+            @click="switchTab('categories')"
+          >
+            分类管理
+          </el-menu-item>
+          <el-menu-item
+            index="audit-logs"
+            @click="switchTab('audit-logs')"
+          >
             审计日志
           </el-menu-item>
           <div class="flex-spacer" />
           <el-menu-item
-            index="/admin/password"
+            index="password"
             @click="goPassword"
           >
             修改密码
           </el-menu-item>
           <el-menu-item
-            index=""
+            index="logout"
             @click="logout"
           >
             退出登录
@@ -67,12 +75,15 @@ import { ElMessage } from 'element-plus';
 const route = useRoute();
 const router = useRouter();
 
-const activeMenu = computed(() => {
-  if (route.path.startsWith('/admin/categories')) return '/admin/categories';
-  if (route.path.startsWith('/admin/websites')) return '/admin/websites';
-  if (route.path.startsWith('/admin/audit-logs')) return '/admin/audit-logs';
-  return '';
+const activeTab = computed(() => {
+  const tab = route.query.tab;
+  if (tab === 'categories' || tab === 'audit-logs' || tab === 'websites') return tab;
+  return 'websites';
 });
+
+function switchTab(tab) {
+  router.push({ path: '/admin', query: { ...route.query, tab } });
+}
 
 function goPassword() {
   router.push('/admin/password');

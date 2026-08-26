@@ -1,95 +1,92 @@
 <template>
-  <Layout>
-    <el-card>
-      <template #header>
-        <div class="pn-card-header">
-          <span>分类管理</span>
-          <el-button
-            type="primary"
-            @click="openDialog()"
-          >
-            新建分类
-          </el-button>
-        </div>
-      </template>
-
-      <el-table
-        ref="tableRef"
-        v-loading="loading"
-        row-key="id"
-        :data="categories"
-      >
-        <el-table-column
-          prop="categoryName"
-          label="分类名称"
-        />
-        <el-table-column
-          prop="displayOrder"
-          label="排序"
-          width="80"
-        />
-        <el-table-column
-          label="操作"
-          width="160"
-        >
-          <template #default="{ row }">
-            <el-button
-              type="primary"
-              link
-              @click="openDialog(row)"
-            >
-              编辑
-            </el-button>
-            <el-button
-              type="danger"
-              link
-              @click="remove(row)"
-            >
-              删除
-            </el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-    </el-card>
-
-    <el-dialog
-      v-model="visible"
-      :title="dialogTitle"
-      width="420px"
-    >
-      <el-form
-        :model="formData"
-        label-width="80px"
-      >
-        <el-form-item label="分类名称">
-          <el-input
-            v-model="formData.categoryName"
-            placeholder="请输入分类名称"
-            maxlength="50"
-          />
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <el-button @click="visible = false">
-          取消
-        </el-button>
+  <el-card>
+    <template #header>
+      <div class="pn-card-header">
+        <span>分类管理</span>
         <el-button
           type="primary"
-          @click="onConfirm"
+          @click="openDialog()"
         >
-          确定
+          新建分类
         </el-button>
-      </template>
-    </el-dialog>
-  </Layout>
+      </div>
+    </template>
+
+    <el-table
+      ref="tableRef"
+      v-loading="loading"
+      row-key="id"
+      :data="categories"
+    >
+      <el-table-column
+        prop="categoryName"
+        label="分类名称"
+      />
+      <el-table-column
+        prop="displayOrder"
+        label="排序"
+        width="80"
+      />
+      <el-table-column
+        label="操作"
+        width="160"
+      >
+        <template #default="{ row }">
+          <el-button
+            type="primary"
+            link
+            @click="openDialog(row)"
+          >
+            编辑
+          </el-button>
+          <el-button
+            type="danger"
+            link
+            @click="remove(row)"
+          >
+            删除
+          </el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+  </el-card>
+
+  <el-dialog
+    v-model="visible"
+    :title="dialogTitle"
+    width="420px"
+  >
+    <el-form
+      :model="formData"
+      label-width="80px"
+    >
+      <el-form-item label="分类名称">
+        <el-input
+          v-model="formData.categoryName"
+          placeholder="请输入分类名称"
+          maxlength="50"
+        />
+      </el-form-item>
+    </el-form>
+    <template #footer>
+      <el-button @click="visible = false">
+        取消
+      </el-button>
+      <el-button
+        type="primary"
+        @click="onConfirm"
+      >
+        确定
+      </el-button>
+    </template>
+  </el-dialog>
 </template>
 
 <script setup>
 import { ref, onMounted, reactive, computed, nextTick } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import Sortable from 'sortablejs';
-import Layout from './Layout.vue';
-import { useApi } from '../../composables/useApi.js';
+import { useApi } from '../../../composables/useApi.js';
 
 const { get, post, put, del } = useApi();
 const loading = ref(false);
@@ -183,6 +180,3 @@ async function remove(row) {
 
 onMounted(loadCategories);
 </script>
-
-<style scoped>
-</style>
