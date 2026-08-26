@@ -1,142 +1,170 @@
 <template>
   <Layout>
-    <t-card
-      :bordered="true"
-      title="网站管理"
-    >
-      <template #actions>
-        <t-button
-          theme="primary"
-          @click="openDialog()"
-        >
-          新增网站
-        </t-button>
+    <el-card>
+      <template #header>
+        <div class="card-header">
+          <span>网站管理</span>
+          <el-button
+            type="primary"
+            @click="openDialog()"
+          >
+            新增网站
+          </el-button>
+        </div>
       </template>
 
-      <t-select
+      <el-select
         v-model="filterCategory"
-        class="mb-4"
         placeholder="按分类筛选"
         clearable
+        class="filter-select"
       >
-        <t-option
+        <el-option
           v-for="category in categories"
           :key="category.id"
           :value="category.id"
           :label="category.categoryName"
         />
-      </t-select>
+      </el-select>
 
       <div
         v-for="category in filteredCategories"
         :key="category.id"
-        class="mb-8"
+        class="category-section"
       >
-        <h3 class="text-lg font-medium text-gray-900 mb-2">
+        <h3 class="category-title">
           {{ category.categoryName }}
         </h3>
-        <t-table
-          row-key="id"
+        <el-table
+          :ref="el => setTableRef(el, category.id)"
           :data="category.websites"
-          :columns="columns"
-          drag-sort="row"
-          @drag-sort="onDragSort($event, category.id)"
+          row-key="id"
+          style="width: 100%"
         >
-          <template #logo="{ row }">
-            <t-avatar
-              v-if="row.logo"
-              :image="row.logo"
-              shape="round"
-              size="small"
-            />
-            <t-avatar
-              v-else
-              size="small"
-            >
-              {{ row.websiteName.charAt(0) }}
-            </t-avatar>
-          </template>
-          <template #action="{ row }">
-            <t-space>
-              <t-button
-                theme="primary"
-                variant="text"
+          <el-table-column
+            label="Logo"
+            width="80"
+          >
+            <template #default="{ row }">
+              <el-avatar
+                v-if="row.logo"
+                :src="row.logo"
+                :size="32"
+              />
+              <el-avatar
+                v-else
+                :size="32"
+              >
+                {{ row.websiteName.charAt(0) }}
+              </el-avatar>
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="websiteName"
+            label="网站名称"
+          />
+          <el-table-column
+            prop="url"
+            label="URL"
+            show-overflow-tooltip
+          />
+          <el-table-column
+            label="操作"
+            width="160"
+          >
+            <template #default="{ row }">
+              <el-button
+                type="primary"
+                link
                 @click="openDialog(row)"
               >
                 编辑
-              </t-button>
-              <t-button
-                theme="danger"
-                variant="text"
+              </el-button>
+              <el-button
+                type="danger"
+                link
                 @click="remove(row)"
               >
                 删除
-              </t-button>
-            </t-space>
-          </template>
-        </t-table>
+              </el-button>
+            </template>
+          </el-table-column>
+        </el-table>
       </div>
-    </t-card>
+    </el-card>
 
-    <t-dialog
-      v-model:visible="visible"
-      :header="dialogTitle"
+    <el-dialog
+      v-model="visible"
+      :title="dialogTitle"
       width="800px"
-      @confirm="onConfirm"
     >
-      <t-form
-        :data="formData"
+      <el-form
+        :model="formData"
         label-width="80px"
       >
-        <t-form-item label="网站名称">
-          <t-input
+        <el-form-item label="网站名称">
+          <el-input
             v-model="formData.websiteName"
             maxlength="100"
           />
-        </t-form-item>
-        <t-form-item label="URL">
-          <t-input v-model="formData.url" />
-        </t-form-item>
-        <t-form-item label="所属分类">
-          <t-select v-model="formData.categoryId">
-            <t-option
+        </el-form-item>
+        <el-form-item label="URL">
+          <el-input v-model="formData.url" />
+        </el-form-item>
+        <el-form-item label="所属分类">
+          <el-select v-model="formData.categoryId">
+            <el-option
               v-for="category in categories"
               :key="category.id"
               :value="category.id"
               :label="category.categoryName"
             />
-          </t-select>
-        </t-form-item>
-        <t-form-item label="Logo">
-          <t-upload
-            v-model="fileList"
-            theme="image"
+          </el-select>
+        </el-form-item>
+        <el-form-item label="Logo">
+          <el-upload
+            v-model:file-list="fileList"
             accept="image/*"
             :auto-upload="false"
-            :max="1"
-            tips="请上传图片，最大 2MB"
-          />
-          <t-checkbox
+            :limit="1"
+            list-type="picture-card"
+          >
+            <el-icon><Plus /></el-icon>
+          </el-upload>
+          <el-checkbox
             v-if="editingId && formData.logo"
             v-model="formData.removeLogo"
           >
             删除当前 Logo
-          </t-checkbox>
-        </t-form-item>
-        <t-form-item label="说明">
+          </el-checkbox>
+        </el-form-item>
+        <el-form-item label="说明">
           <div
             id="editor"
             style="height: 300px;"
           />
-        </t-form-item>
-      </t-form>
-    </t-dialog>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="visible = false">
+          取消
+        </el-button>
+        <el-button
+          type="primary"
+          @click="onConfirm"
+        >
+          保存
+        </el-button>
+      </template>
+    </el-dialog>
   </Layout>
 </template>
 
 <script setup>
 import { ref, onMounted, reactive, computed, nextTick } from 'vue';
-import { MessagePlugin } from 'tdesign-vue-next';
+import { ElMessage, ElMessageBox } from 'element-plus';
+import { Plus } from '@element-plus/icons-vue';
+import Sortable from 'sortablejs';
 import Layout from './Layout.vue';
 import { useApi } from '../../composables/useApi.js';
 import Editor from '@toast-ui/editor';
@@ -150,6 +178,7 @@ const visible = ref(false);
 const editingId = ref(null);
 const filterCategory = ref(null);
 const fileList = ref([]);
+const tableRefs = new Map();
 let editor = null;
 
 const formData = reactive({
@@ -162,13 +191,6 @@ const formData = reactive({
 });
 
 const dialogTitle = computed(() => (editingId.value ? '编辑网站' : '新增网站'));
-
-const columns = [
-  { colKey: 'logo', title: 'Logo', width: 80 },
-  { colKey: 'websiteName', title: '网站名称' },
-  { colKey: 'url', title: 'URL', ellipsis: true },
-  { colKey: 'action', title: '操作', width: 160 },
-];
 
 const filteredCategories = computed(() => {
   return categories.value
@@ -191,9 +213,52 @@ async function loadData() {
     ]);
     if (catRes.code === 0) categories.value = catRes.data;
     if (webRes.code === 0) websites.value = webRes.data.list;
+    await nextTick();
+    initSortables();
   } finally {
     loading.value = false;
   }
+}
+
+function setTableRef(el, categoryId) {
+  if (el) {
+    tableRefs.set(categoryId, el);
+  }
+}
+
+function initSortables() {
+  tableRefs.forEach((table, categoryId) => {
+    const el = table.$el.querySelector('.el-table__body tbody');
+    if (!el) return;
+
+    Sortable.create(el, {
+      animation: 150,
+      onEnd: async (evt) => {
+        const category = filteredCategories.value.find(c => c.id === categoryId);
+        if (!category) return;
+        const newData = [...category.websites];
+        const moved = newData.splice(evt.oldIndex, 1)[0];
+        newData.splice(evt.newIndex, 0, moved);
+
+        websites.value = websites.value.map(w => {
+          const idx = newData.findIndex(item => item.id === w.id);
+          if (idx >= 0) {
+            return { ...w, displayOrder: idx + 1 };
+          }
+          return w;
+        });
+
+        const ids = newData.map(item => item.id);
+        const res = await put(`/api/admin/categories/${categoryId}/websites/order`, { ids });
+        if (res.code === 0) {
+          ElMessage.success('排序已保存');
+        } else {
+          ElMessage.error(res.message);
+          await loadData();
+        }
+      },
+    });
+  });
 }
 
 async function initEditor(value) {
@@ -254,45 +319,54 @@ async function onConfirm() {
     const data = await res.json();
 
     if (data.code === 0) {
-      MessagePlugin.success(dialogTitle.value + '成功');
+      ElMessage.success(dialogTitle.value + '成功');
       visible.value = false;
       await loadData();
     } else {
-      MessagePlugin.error(data.message);
+      ElMessage.error(data.message);
     }
   } catch (err) {
-    MessagePlugin.error('保存失败');
+    ElMessage.error('保存失败');
   }
 }
 
 async function remove(row) {
-  if (!confirm('确定删除该网站吗？')) return;
+  try {
+    await ElMessageBox.confirm('确定删除该网站吗？', '提示', { type: 'warning' });
+  } catch {
+    return;
+  }
+
   const res = await del(`/api/admin/websites/${row.id}`);
   if (res.code === 0) {
-    MessagePlugin.success('删除成功');
+    ElMessage.success('删除成功');
     await loadData();
   } else {
-    MessagePlugin.error(res.message);
-  }
-}
-
-async function onDragSort({ newData }, categoryId) {
-  websites.value = websites.value.map(w => {
-    const idx = newData.findIndex(item => item.id === w.id);
-    if (idx >= 0) {
-      return { ...w, displayOrder: idx + 1 };
-    }
-    return w;
-  });
-  const ids = newData.map(item => item.id);
-  const res = await put(`/api/admin/categories/${categoryId}/websites/order`, { ids });
-  if (res.code === 0) {
-    MessagePlugin.success('排序已保存');
-  } else {
-    MessagePlugin.error(res.message);
-    await loadData();
+    ElMessage.error(res.message);
   }
 }
 
 onMounted(loadData);
 </script>
+
+<style scoped>
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.filter-select {
+  margin-bottom: 16px;
+  width: 240px;
+}
+.category-section {
+  margin-bottom: 24px;
+}
+.category-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  padding-left: 12px;
+  border-left: 4px solid #409eff;
+}
+</style>

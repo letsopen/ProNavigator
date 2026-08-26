@@ -1,63 +1,62 @@
 <template>
   <Layout>
-    <t-card
-      :bordered="true"
-      title="修改密码"
-      class="max-w-xl"
-    >
-      <t-form
+    <el-card class="password-card">
+      <template #header>
+        <span>修改密码</span>
+      </template>
+      <el-form
         ref="form"
-        :data="formData"
+        :model="formData"
         :rules="rules"
-        @submit="onSubmit"
+        label-width="100px"
       >
-        <t-form-item
+        <el-form-item
           label="旧密码"
-          name="oldPassword"
+          prop="oldPassword"
         >
-          <t-input
+          <el-input
             v-model="formData.oldPassword"
             type="password"
             placeholder="请输入旧密码"
           />
-        </t-form-item>
-        <t-form-item
+        </el-form-item>
+        <el-form-item
           label="新密码"
-          name="newPassword"
+          prop="newPassword"
         >
-          <t-input
+          <el-input
             v-model="formData.newPassword"
             type="password"
             placeholder="请输入新密码"
           />
-        </t-form-item>
-        <t-form-item
+        </el-form-item>
+        <el-form-item
           label="确认新密码"
-          name="confirmPassword"
+          prop="confirmPassword"
         >
-          <t-input
+          <el-input
             v-model="formData.confirmPassword"
             type="password"
             placeholder="请再次输入新密码"
           />
-        </t-form-item>
-        <t-form-item>
-          <t-button
-            theme="primary"
-            type="submit"
+        </el-form-item>
+        <el-form-item>
+          <el-button
+            type="primary"
             :loading="submitting"
+            @click="onSubmit"
           >
             保存
-          </t-button>
-        </t-form-item>
-      </t-form>
-    </t-card>
+          </el-button>
+        </el-form-item>
+      </el-form>
+    </el-card>
   </Layout>
 </template>
 
 <script setup>
 import { ref, reactive } from 'vue';
-import { MessagePlugin } from 'tdesign-vue-next';
+import { ElMessage } from 'element-plus';
 import Layout from './Layout.vue';
 import { useApi } from '../../composables/useApi.js';
 
@@ -70,25 +69,28 @@ const formData = reactive({
   confirmPassword: '',
 });
 
-const rules = {
-  oldPassword: [{ required: true, message: '旧密码不能为空', type: 'error' }],
-  newPassword: [{ required: true, message: '新密码不能为空', type: 'error' }],
-  confirmPassword: [
-    { required: true, message: '确认密码不能为空', type: 'error' },
-    {
-      validator: (val) => {
-        if (!val) return { result: true };
-        return val === formData.newPassword ? { result: true } : { result: false, message: '两次输入的密码不一致', type: 'error' };
-      },
-    },
-  ],
+const validateConfirmPassword = (rule, value, callback) => {
+  if (!value) {
+    callback(new Error('确认密码不能为空'));
+  } else if (value !== formData.newPassword) {
+    callback(new Error('两次输入的密码不一致'));
+  } else {
+    callback();
+  }
 };
 
-async function onSubmit({ validateResult }) {
-  if (validateResult !== true) return;
+const rules = {
+  oldPassword: [{ required: true, message: '旧密码不能为空', trigger: 'blur' }],
+  newPassword: [{ required: true, message: '新密码不能为空', trigger: 'blur' }],
+  confirmPassword: [{ validator: validateConfirmPassword, trigger: 'blur' }],
+};
+
+async function onSubmit() {
+  const valid = await form.value.validate().catch(() => false);
+  if (!valid) return;
 
   if (formData.newPassword !== formData.confirmPassword) {
-    MessagePlugin.error('两次输入的密码不一致');
+    ElMessage.error('两次输入的密码不一致');
     return;
   }
 
@@ -100,16 +102,22 @@ async function onSubmit({ validateResult }) {
     });
 
     if (res.code === 0) {
-      MessagePlugin.success('密码修改成功，请重新登录');
+      ElMessage.success('密码修改成功，请重新登录');
       localStorage.removeItem('nav_token');
       window.location.href = '/admin/login';
     } else {
-      MessagePlugin.error(res.message);
+      ElMessage.error(res.message);
     }
   } catch (err) {
-    MessagePlugin.error('修改失败');
+    ElMessage.error('修改失败');
   } finally {
     submitting.value = false;
   }
 }
 </script>
+
+<style scoped>
+.password-card {
+  max-width: 560px;
+}
+</style>

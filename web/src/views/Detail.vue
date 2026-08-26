@@ -1,67 +1,57 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
-    <header class="bg-white shadow-sm">
-      <div class="max-w-4xl mx-auto px-4 py-4">
-        <t-button
-          theme="default"
-          variant="text"
+  <div class="detail-container">
+    <el-header class="detail-header">
+      <div class="header-inner">
+        <el-button
+          text
           @click="goHome"
         >
-          <template #icon>
-            <arrow-left-icon />
-          </template>
+          <el-icon><ArrowLeft /></el-icon>
           返回首页
-        </t-button>
+        </el-button>
       </div>
-    </header>
+    </el-header>
 
-    <main class="max-w-4xl mx-auto px-4 py-8">
-      <t-loading v-if="loading" />
+    <main class="detail-main">
+      <el-loading v-if="loading" />
 
-      <t-card
+      <el-card
         v-else-if="website"
-        :bordered="true"
-        class="shadow"
+        class="detail-card"
       >
-        <div class="flex items-start mb-6">
-          <t-avatar
+        <div class="website-info">
+          <el-avatar
             v-if="website.logo"
-            :image="website.logo"
-            shape="round"
-            size="large"
-            class="mr-4"
+            :src="website.logo"
+            :size="64"
           />
-          <t-avatar
+          <el-avatar
             v-else
-            size="large"
-            class="mr-4"
+            :size="64"
           >
             {{ website.websiteName?.charAt(0) }}
-          </t-avatar>
-          <div>
-            <h1 class="text-2xl font-bold text-gray-900">
-              {{ website.websiteName }}
-            </h1>
-            <t-link
-              theme="primary"
+          </el-avatar>
+          <div class="website-meta">
+            <h1>{{ website.websiteName }}</h1>
+            <el-link
+              type="primary"
               :href="website.url"
               target="_blank"
             >
               {{ website.url }}
-            </t-link>
+            </el-link>
           </div>
         </div>
 
-        <t-divider />
-
+        <el-divider />
 
         <div
-          class="prose max-w-none markdown-body"
+          class="markdown-body"
           v-html="website.descriptionHtml"
         ></div>
-      </t-card>
+      </el-card>
 
-      <t-empty
+      <el-empty
         v-else
         description="网站不存在"
       />
@@ -72,8 +62,8 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { ArrowLeftIcon } from 'tdesign-icons-vue-next';
-import { MessagePlugin } from 'tdesign-vue-next';
+import { ArrowLeft } from '@element-plus/icons-vue';
+import { ElMessage } from 'element-plus';
 
 const route = useRoute();
 const router = useRouter();
@@ -91,10 +81,10 @@ async function loadWebsite() {
     if (data.code === 0) {
       website.value = data.data;
     } else {
-      MessagePlugin.error(data.message);
+      ElMessage.error(data.message);
     }
   } catch (err) {
-    MessagePlugin.error('加载详情失败');
+    ElMessage.error('加载详情失败');
   } finally {
     loading.value = false;
   }
@@ -102,3 +92,42 @@ async function loadWebsite() {
 
 onMounted(loadWebsite);
 </script>
+
+<style scoped>
+.detail-container {
+  min-height: 100vh;
+  background-color: #f5f7fa;
+}
+.detail-header {
+  background-color: #fff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  height: auto;
+  padding: 12px 0;
+}
+.header-inner {
+  max-width: 896px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+.detail-main {
+  max-width: 896px;
+  margin: 0 auto;
+  padding: 24px;
+}
+.detail-card {
+  margin-bottom: 24px;
+}
+.website-info {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.website-meta h1 {
+  margin: 0 0 8px;
+  font-size: 24px;
+}
+.markdown-body {
+  line-height: 1.6;
+}
+</style>

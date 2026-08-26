@@ -1,18 +1,14 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
-    <header class="bg-white shadow-sm">
-      <div class="max-w-7xl mx-auto px-4 py-6">
-        <h1 class="text-2xl font-bold text-gray-900">
-          ProNavigator
-        </h1>
-        <p class="text-gray-600 mt-1">
-          快速访问常用内部系统
-        </p>
+  <div class="home-container">
+    <el-header class="home-header">
+      <div class="header-inner">
+        <h1>ProNavigator</h1>
+        <p>快速访问常用内部系统</p>
       </div>
-    </header>
+    </el-header>
 
-    <main class="max-w-7xl mx-auto px-4 py-8">
-      <t-empty
+    <main class="main-content">
+      <el-empty
         v-if="empty"
         description="暂无导航内容，请联系管理员"
       />
@@ -21,72 +17,63 @@
         <div
           v-for="category in categories"
           :key="category.id"
-          class="mb-8"
+          class="category-block"
         >
-          <h2 class="text-lg font-semibold text-gray-900 mb-4 pl-3 border-l-4 border-blue-500">
+          <h2 class="category-title">
             {{ category.categoryName }}
           </h2>
-          <t-row :gutter="[16, 16]">
-            <t-col
+          <el-row :gutter="16">
+            <el-col
               v-for="website in category.websites"
               :key="website.id"
-              :span="3"
-              :md="4"
-              :sm="6"
-              :xs="12"
+              :xs="24"
+              :sm="12"
+              :md="8"
+              :lg="6"
             >
-              <t-card
-                :bordered="true"
-                hover-shadow
-                class="cursor-pointer"
+              <el-card
+                class="website-card"
+                shadow="hover"
                 @click="openWebsite(website.url)"
               >
-                <template #header>
-                  <div class="flex items-center">
-                    <t-avatar
-                      v-if="website.logo"
-                      :image="website.logo"
-                      shape="round"
-                      size="medium"
-                      class="mr-3"
-                    />
-                    <t-avatar
-                      v-else
-                      size="medium"
-                      class="mr-3"
-                    >
-                      {{ website.websiteName.charAt(0) }}
-                    </t-avatar>
-                    <span class="font-medium truncate">{{ website.websiteName }}</span>
-                  </div>
-                </template>
-                <t-space>
-                  <t-button
-                    theme="primary"
-                    variant="text"
+                <div class="website-header">
+                  <el-avatar
+                    v-if="website.logo"
+                    :src="website.logo"
+                    :size="40"
+                  />
+                  <el-avatar
+                    v-else
+                    :size="40"
+                  >
+                    {{ website.websiteName.charAt(0) }}
+                  </el-avatar>
+                  <span class="website-name">{{ website.websiteName }}</span>
+                </div>
+                <div class="website-actions">
+                  <el-button
+                    type="primary"
+                    link
                     @click.stop="openWebsite(website.url)"
                   >
                     访问网站
-                  </t-button>
-                  <t-button
-                    theme="default"
-                    variant="text"
+                  </el-button>
+                  <el-button
+                    link
                     @click.stop="goDetail(website.id)"
                   >
                     详情
-                  </t-button>
-                </t-space>
-              </t-card>
-            </t-col>
-          </t-row>
+                  </el-button>
+                </div>
+              </el-card>
+            </el-col>
+          </el-row>
         </div>
       </div>
     </main>
 
-    <footer class="bg-white border-t border-gray-200 mt-12">
-      <div class="max-w-7xl mx-auto py-4 text-center text-sm text-gray-500">
-        ProNavigator
-      </div>
+    <footer class="home-footer">
+      <p>ProNavigator</p>
     </footer>
   </div>
 </template>
@@ -94,7 +81,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { MessagePlugin } from 'tdesign-vue-next';
+import { ElMessage } from 'element-plus';
 
 const router = useRouter();
 const categories = ref([]);
@@ -108,10 +95,10 @@ async function loadHomeData() {
       categories.value = data.data.categories;
       empty.value = data.data.empty;
     } else {
-      MessagePlugin.error(data.message);
+      ElMessage.error(data.message);
     }
   } catch (err) {
-    MessagePlugin.error('加载数据失败');
+    ElMessage.error('加载数据失败');
   }
 }
 
@@ -125,3 +112,73 @@ function goDetail(id) {
 
 onMounted(loadHomeData);
 </script>
+
+<style scoped>
+.home-container {
+  min-height: 100vh;
+  background-color: #f5f7fa;
+}
+.home-header {
+  background-color: #fff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  height: auto;
+  padding: 24px 0;
+}
+.header-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+.home-header h1 {
+  margin: 0 0 8px;
+  font-size: 24px;
+}
+.home-header p {
+  margin: 0;
+  color: #606266;
+}
+.main-content {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 24px;
+}
+.category-block {
+  margin-bottom: 32px;
+}
+.category-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  padding-left: 12px;
+  border-left: 4px solid #409eff;
+}
+.website-card {
+  cursor: pointer;
+  margin-bottom: 16px;
+}
+.website-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.website-name {
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.website-actions {
+  display: flex;
+  gap: 8px;
+}
+.home-footer {
+  background-color: #fff;
+  border-top: 1px solid #e4e7ed;
+  margin-top: 48px;
+  padding: 16px 0;
+  text-align: center;
+  color: #909399;
+  font-size: 14px;
+}
+</style>

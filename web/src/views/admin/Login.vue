@@ -1,56 +1,57 @@
 <template>
-  <div class="min-h-screen bg-gray-100 flex items-center justify-center">
-    <t-card
-      :bordered="true"
-      class="w-full max-w-md shadow"
+  <div class="login-container">
+    <el-card
+      class="login-card"
+      shadow="always"
     >
-      <h1 class="text-2xl font-bold text-center mb-6">
+      <h1 class="login-title">
         管理员登录
       </h1>
-      <t-form
+      <el-form
         ref="form"
-        :data="formData"
+        :model="formData"
         :rules="rules"
-        @submit="onSubmit"
+        label-position="top"
+        @submit.prevent="onSubmit"
       >
-        <t-form-item
+        <el-form-item
           label="用户名"
-          name="username"
+          prop="username"
         >
-          <t-input
+          <el-input
             v-model="formData.username"
             placeholder="请输入用户名"
           />
-        </t-form-item>
-        <t-form-item
+        </el-form-item>
+        <el-form-item
           label="密码"
-          name="password"
+          prop="password"
         >
-          <t-input
+          <el-input
             v-model="formData.password"
             type="password"
             placeholder="请输入密码"
           />
-        </t-form-item>
-        <t-form-item>
-          <t-button
-            theme="primary"
-            type="submit"
-            block
+        </el-form-item>
+        <el-form-item>
+          <el-button
+            type="primary"
+            native-type="submit"
             :loading="submitting"
+            class="w-full"
           >
             登录
-          </t-button>
-        </t-form-item>
-      </t-form>
-    </t-card>
+          </el-button>
+        </el-form-item>
+      </el-form>
+    </el-card>
   </div>
 </template>
 
 <script setup>
 import { ref, reactive } from 'vue';
 import { useRouter } from 'vue-router';
-import { MessagePlugin } from 'tdesign-vue-next';
+import { ElMessage } from 'element-plus';
 
 const router = useRouter();
 const form = ref(null);
@@ -58,12 +59,13 @@ const submitting = ref(false);
 const formData = reactive({ username: '', password: '' });
 
 const rules = {
-  username: [{ required: true, message: '用户名不能为空', type: 'error' }],
-  password: [{ required: true, message: '密码不能为空', type: 'error' }],
+  username: [{ required: true, message: '用户名不能为空', trigger: 'blur' }],
+  password: [{ required: true, message: '密码不能为空', trigger: 'blur' }],
 };
 
-async function onSubmit({ validateResult }) {
-  if (validateResult !== true) return;
+async function onSubmit() {
+  const valid = await form.value.validate().catch(() => false);
+  if (!valid) return;
 
   submitting.value = true;
   try {
@@ -76,15 +78,38 @@ async function onSubmit({ validateResult }) {
 
     if (data.code === 0) {
       localStorage.setItem('nav_token', data.data.token);
-      MessagePlugin.success('登录成功');
+      ElMessage.success('登录成功');
       router.push('/admin/categories');
     } else {
-      MessagePlugin.error(data.message);
+      ElMessage.error(data.message);
     }
   } catch (err) {
-    MessagePlugin.error('登录失败');
+    ElMessage.error('登录失败');
   } finally {
     submitting.value = false;
   }
 }
 </script>
+
+<style scoped>
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f5f7fa;
+}
+.login-card {
+  width: 100%;
+  max-width: 420px;
+}
+.login-title {
+  font-size: 24px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 24px;
+}
+.w-full {
+  width: 100%;
+}
+</style>

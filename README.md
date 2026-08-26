@@ -16,7 +16,7 @@
 
 - Node.js 20 + Express
 - SQLite + better-sqlite3
-- Vue 3 + Vite + 腾讯 TDesign
+- Vue 3 + Vite + Element Plus
 - Toast UI Editor + marked + DOMPurify
 - JWT（jsonwebtoken）
 - Docker + GitHub Actions

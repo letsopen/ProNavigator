@@ -1,64 +1,94 @@
 <template>
   <Layout>
-    <t-card
-      :bordered="true"
-      title="分类管理"
-    >
-      <template #actions>
-        <t-button
-          theme="primary"
-          @click="openDialog()"
-        >
-          新建分类
-        </t-button>
+    <el-card>
+      <template #header>
+        <div class="card-header">
+          <span>分类管理</span>
+          <el-button
+            type="primary"
+            @click="openDialog()"
+          >
+            新建分类
+          </el-button>
+        </div>
       </template>
 
-      <t-table
+      <el-table
+        ref="tableRef"
+        v-loading="loading"
         row-key="id"
         :data="categories"
-        :columns="columns"
-        :loading="loading"
-        drag-sort="row"
-        @drag-sort="onDragSort"
+        style="width: 100%"
       >
-        <template #action="{ row }">
-          <t-space>
-            <t-button
-              theme="primary"
-              variant="text"
+        <el-table-column
+          prop="categoryName"
+          label="分类名称"
+        />
+        <el-table-column
+          prop="displayOrder"
+          label="排序"
+          width="80"
+        />
+        <el-table-column
+          label="操作"
+          width="160"
+        >
+          <template #default="{ row }">
+            <el-button
+              type="primary"
+              link
               @click="openDialog(row)"
             >
               编辑
-            </t-button>
-            <t-button
-              theme="danger"
-              variant="text"
+            </el-button>
+            <el-button
+              type="danger"
+              link
               @click="remove(row)"
             >
               删除
-            </t-button>
-          </t-space>
-        </template>
-      </t-table>
-    </t-card>
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-card>
 
-    <t-dialog
-      v-model:visible="visible"
-      :header="dialogTitle"
-      @confirm="onConfirm"
+    <el-dialog
+      v-model="visible"
+      :title="dialogTitle"
+      width="420px"
     >
-      <t-input
-        v-model="formData.categoryName"
-        placeholder="请输入分类名称"
-        maxlength="50"
-      />
-    </t-dialog>
+      <el-form
+        :model="formData"
+        label-width="80px"
+      >
+        <el-form-item label="分类名称">
+          <el-input
+            v-model="formData.categoryName"
+            placeholder="请输入分类名称"
+            maxlength="50"
+          />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="visible = false">
+          取消
+        </el-button>
+        <el-button
+          type="primary"
+          @click="onConfirm"
+        >
+          确定
+        </el-button>
+      </template>
+    </el-dialog>
   </Layout>
 </template>
 
 <script setup>
-import { ref, onMounted, reactive, computed } from 'vue';
-import { MessagePlugin } from 'tdesign-vue-next';
+import { ref, onMounted, reactive, computed, nextTick } from 'vue';
+import { ElMessage, ElMessageBox } from 'element-plus';
+import Sortable from 'sortablejs';
 import Layout from './Layout.vue';
 import { useApi } from '../../composables/useApi.js';
 
@@ -68,14 +98,9 @@ const categories = ref([]);
 const visible = ref(false);
 const editingId = ref(null);
 const formData = reactive({ categoryName: '' });
+const tableRef = ref(null);
 
 const dialogTitle = computed(() => (editingId.value ? '编辑分类' : '新建分类'));
-
-const columns = [
-  { colKey: 'categoryName', title: '分类名称' },
-  { colKey: 'displayOrder', title: '排序', width: 80 },
-  { colKey: 'action', title: '操作', width: 160 },
-];
 
 async function loadCategories() {
   loading.value = true;
@@ -83,10 +108,36 @@ async function loadCategories() {
     const res = await get('/api/admin/categories');
     if (res.code === 0) {
       categories.value = res.data;
+      await nextTick();
+      initSortable();
     }
   } finally {
     loading.value = false;
   }
+}
+
+function initSortable() {
+  const el = tableRef.value?.$el.querySelector('.el-table__body tbody');
+  if (!el) return;
+
+  Sortable.create(el, {
+    animation: 150,
+    onEnd: async (evt) => {
+      const newData = [...categories.value];
+      const moved = newData.splice(evt.oldIndex, 1)[0];
+      newData.splice(evt.newIndex, 0, moved);
+      categories.value = newData;
+
+      const ids = newData.map(item => item.id);
+      const res = await put('/api/admin/categories/order', { ids });
+      if (res.code === 0) {
+        ElMessage.success('排序已保存');
+      } else {
+        ElMessage.error(res.message);
+        await loadCategories();
+      }
+    },
+  });
 }
 
 function openDialog(row) {
@@ -98,7 +149,7 @@ function openDialog(row) {
 async function onConfirm() {
   const name = formData.categoryName.trim();
   if (!name) {
-    MessagePlugin.error('分类名称不能为空');
+    ElMessage.error('分类名称不能为空');
     return;
   }
 
@@ -107,36 +158,37 @@ async function onConfirm() {
     : await post('/api/admin/categories', { categoryName: name });
 
   if (res.code === 0) {
-    MessagePlugin.success(dialogTitle.value + '成功');
+    ElMessage.success(dialogTitle.value + '成功');
     visible.value = false;
     await loadCategories();
   } else {
-    MessagePlugin.error(res.message);
+    ElMessage.error(res.message);
   }
 }
 
 async function remove(row) {
-  if (!confirm('确定删除该分类吗？')) return;
+  try {
+    await ElMessageBox.confirm('确定删除该分类吗？', '提示', { type: 'warning' });
+  } catch {
+    return;
+  }
+
   const res = await del(`/api/admin/categories/${row.id}`);
   if (res.code === 0) {
-    MessagePlugin.success('删除成功');
+    ElMessage.success('删除成功');
     await loadCategories();
   } else {
-    MessagePlugin.error(res.message);
-  }
-}
-
-async function onDragSort({ newData }) {
-  categories.value = newData;
-  const ids = newData.map(item => item.id);
-  const res = await put('/api/admin/categories/order', { ids });
-  if (res.code === 0) {
-    MessagePlugin.success('排序已保存');
-  } else {
-    MessagePlugin.error(res.message);
-    await loadCategories();
+    ElMessage.error(res.message);
   }
 }
 
 onMounted(loadCategories);
 </script>
+
+<style scoped>
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+</style>

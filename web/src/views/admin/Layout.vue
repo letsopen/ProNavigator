@@ -1,65 +1,55 @@
 <template>
-  <t-layout class="min-h-screen">
-    <t-header class="bg-white shadow-sm">
-      <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-        <div class="flex items-center">
-          <span class="text-lg font-semibold">ProNavigator 管理后台</span>
-          <t-menu
-            class="ml-8"
-            theme="light"
-            :value="activeMenu"
-            :collapse="false"
-          >
-            <t-menu-item
-              value="categories"
-              to="/admin/categories"
-            >
-              分类管理
-            </t-menu-item>
-            <t-menu-item
-              value="websites"
-              to="/admin/websites"
-            >
-              网站管理
-            </t-menu-item>
-          </t-menu>
-        </div>
-        <t-space>
-          <t-button
-            theme="default"
-            variant="text"
+  <el-container class="layout-container">
+    <el-header class="layout-header">
+      <div class="header-inner">
+        <span class="logo">ProNavigator 管理后台</span>
+        <el-menu
+          :default-active="activeMenu"
+          mode="horizontal"
+          router
+          class="header-menu"
+        >
+          <el-menu-item index="/admin/categories">
+            分类管理
+          </el-menu-item>
+          <el-menu-item index="/admin/websites">
+            网站管理
+          </el-menu-item>
+        </el-menu>
+        <div class="header-actions">
+          <el-button
+            text
             @click="goPassword"
           >
             修改密码
-          </t-button>
-          <t-button
-            theme="danger"
-            variant="text"
+          </el-button>
+          <el-button
+            text
+            type="danger"
             @click="logout"
           >
             退出登录
-          </t-button>
-        </t-space>
+          </el-button>
+        </div>
       </div>
-    </t-header>
-
-    <t-content class="max-w-7xl mx-auto w-full px-4 py-6">
+    </el-header>
+    <el-main class="layout-main">
       <router-view />
-    </t-content>
-  </t-layout>
+    </el-main>
+  </el-container>
 </template>
 
 <script setup>
 import { computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { MessagePlugin } from 'tdesign-vue-next';
+import { ElMessage } from 'element-plus';
 
 const route = useRoute();
 const router = useRouter();
 
 const activeMenu = computed(() => {
-  if (route.path.startsWith('/admin/categories')) return 'categories';
-  if (route.path.startsWith('/admin/websites')) return 'websites';
+  if (route.path.startsWith('/admin/categories')) return '/admin/categories';
+  if (route.path.startsWith('/admin/websites')) return '/admin/websites';
   return '';
 });
 
@@ -80,7 +70,46 @@ async function logout() {
     }
   }
   localStorage.removeItem('nav_token');
-  MessagePlugin.success('已退出登录');
+  ElMessage.success('已退出登录');
   router.push('/admin/login');
 }
 </script>
+
+<style scoped>
+.layout-container {
+  min-height: 100vh;
+}
+.layout-header {
+  background-color: #fff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  padding: 0;
+}
+.header-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 24px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+}
+.logo {
+  font-size: 18px;
+  font-weight: 600;
+  margin-right: 32px;
+}
+.header-menu {
+  flex: 1;
+  border-bottom: none;
+}
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.layout-main {
+  max-width: 1280px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 24px;
+}
+</style>

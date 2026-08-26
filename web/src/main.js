@@ -1,10 +1,16 @@
 import { createApp } from 'vue';
-import TDesign from 'tdesign-vue-next';
-import 'tdesign-vue-next/es/style/index.css';
+import ElementPlus from 'element-plus';
+import 'element-plus/dist/index.css';
+import * as ElementPlusIconsVue from '@element-plus/icons-vue';
 import App from './App.vue';
 import router from './router';
 
 const app = createApp(App);
-app.use(TDesign);
+
+for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+  app.component(key, component);
+}
+
+app.use(ElementPlus);
 app.use(router);
 app.mount('#app');
