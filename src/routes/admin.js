@@ -16,9 +16,9 @@ router.post('/logout', authenticateToken, adminController.logout);
 
 router.get('/categories', authenticateToken, categoryController.listCategories);
 router.post('/categories', authenticateToken, categoryController.createRules, validate, categoryController.createCategory);
+router.put('/categories/order', authenticateToken, sortController.categorySortRules, validate, sortController.sortCategories);
 router.put('/categories/:id', authenticateToken, categoryController.updateRules, validate, categoryController.updateCategory);
 router.delete('/categories/:id', authenticateToken, categoryController.deleteRules, validate, categoryController.deleteCategory);
-router.put('/categories/order', authenticateToken, sortController.categorySortRules, validate, sortController.sortCategories);
 
 router.get('/websites', authenticateToken, websiteController.listRules, validate, websiteController.listWebsites);
 router.post('/websites', authenticateToken, upload.single('logo'), websiteController.createRules, validate, websiteController.createWebsite);
