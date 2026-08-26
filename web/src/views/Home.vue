@@ -194,9 +194,11 @@ onMounted(loadHomeData);
   display: flex;
   width: 100%;
   padding: 0;
+  overflow: hidden;
 }
 .website-logo {
   flex: 0 0 25%;
+  min-width: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -208,7 +210,8 @@ onMounted(loadHomeData);
   flex-shrink: 0;
 }
 .website-title {
-  flex: 0 0 75%;
+  flex: 1;
+  min-width: 0;
   display: flex;
   align-items: center;
   justify-content: center;
