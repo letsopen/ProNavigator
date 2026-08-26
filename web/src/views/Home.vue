@@ -68,7 +68,6 @@
 
     <el-footer>
       <div class="footer-content">
-        <span>ProNavigator</span>
         <el-link
           type="primary"
           @click="goAdmin"

@@ -1,51 +1,61 @@
 <template>
-  <el-container class="login-container">
-    <el-card
-      class="login-card"
-      shadow="always"
-    >
-      <template #header>
-        <div class="card-header">
-          管理员登录
-        </div>
-      </template>
-      <el-form
-        ref="form"
-        :model="formData"
-        :rules="rules"
-        label-position="top"
+  <div class="login-page">
+    <div class="login-wrapper">
+      <el-card
+        class="login-card"
+        shadow="always"
       >
-        <el-form-item
-          label="用户名"
-          prop="username"
+        <template #header>
+          <div class="card-header">
+            管理员登录
+          </div>
+        </template>
+        <el-form
+          ref="form"
+          :model="formData"
+          :rules="rules"
+          label-position="top"
         >
-          <el-input
-            v-model="formData.username"
-            placeholder="请输入用户名"
-          />
-        </el-form-item>
-        <el-form-item
-          label="密码"
-          prop="password"
-        >
-          <el-input
-            v-model="formData.password"
-            type="password"
-            placeholder="请输入密码"
-          />
-        </el-form-item>
-        <el-form-item>
-          <el-button
-            type="primary"
-            :loading="submitting"
-            @click="onSubmit"
+          <el-form-item
+            label="用户名"
+            prop="username"
           >
-            登录
-          </el-button>
-        </el-form-item>
-      </el-form>
-    </el-card>
-  </el-container>
+            <el-input
+              v-model="formData.username"
+              placeholder="请输入用户名"
+            />
+          </el-form-item>
+          <el-form-item
+            label="密码"
+            prop="password"
+          >
+            <el-input
+              v-model="formData.password"
+              type="password"
+              placeholder="请输入密码"
+            />
+          </el-form-item>
+          <el-form-item>
+            <el-button
+              type="primary"
+              :loading="submitting"
+              @click="onSubmit"
+            >
+              登录
+            </el-button>
+          </el-form-item>
+        </el-form>
+      </el-card>
+    </div>
+    <div class="login-footer">
+      <el-link
+        type="primary"
+        @click="goHome"
+      >
+        首页
+      </el-link>
+    </div>
+  </div>
 </template>
 
 <script setup>
@@ -69,6 +79,10 @@ onMounted(() => {
     router.push('/admin/categories');
   }
 });
+
+function goHome() {
+  router.push('/');
+}
 
 async function onSubmit() {
   const valid = await form.value.validate().catch(() => false);
@@ -99,11 +113,18 @@ async function onSubmit() {
 </script>
 
 <style scoped>
-.login-container {
-  justify-content: center;
-  align-items: center;
+.login-page {
+  display: flex;
+  flex-direction: column;
   min-height: 100vh;
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+.login-wrapper {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 24px;
 }
 .login-card {
   width: 100%;
@@ -113,6 +134,10 @@ async function onSubmit() {
 .card-header {
   font-size: 20px;
   font-weight: bold;
+  text-align: center;
+}
+.login-footer {
+  padding: 16px;
   text-align: center;
 }
 </style>

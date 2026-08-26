@@ -34,6 +34,17 @@
     <el-main>
       <slot />
     </el-main>
+
+    <el-footer>
+      <div class="footer-content">
+        <el-link
+          type="primary"
+          @click="goHome"
+        >
+          首页
+        </el-link>
+      </div>
+    </el-footer>
   </el-container>
 </template>
 
@@ -54,6 +65,10 @@ const activeMenu = computed(() => {
 
 function goPassword() {
   router.push('/admin/password');
+}
+
+function goHome() {
+  router.push('/');
 }
 
 async function logout() {
@@ -77,5 +92,11 @@ async function logout() {
 <style scoped>
 .flex-spacer {
   flex: 1;
+}
+.footer-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
 }
 </style>
