@@ -2,7 +2,7 @@
   <el-card>
     <template #header>
       <div class="pn-card-header">
-        <span>网站管理</span>
+        <span>{{ panelTitle }}</span>
         <el-button
           type="primary"
           @click="openDialog()"
@@ -12,84 +12,62 @@
       </div>
     </template>
 
-    <el-select
-      v-model="filterCategory"
-      placeholder="按分类筛选"
-      clearable
-      class="filter-select"
+    <el-table
+      ref="tableRef"
+      v-loading="loading"
+      :data="filteredWebsites"
+      row-key="id"
+      size="large"
     >
-      <el-option
-        v-for="category in categories"
-        :key="category.id"
-        :value="category.id"
-        :label="category.categoryName"
-      />
-    </el-select>
-
-    <el-card
-      v-for="category in filteredCategories"
-      :key="category.id"
-      shadow="never"
-      class="category-card"
-    >
-      <template #header>
-        <span>{{ category.categoryName }}</span>
-      </template>
-      <el-table
-        :ref="el => setTableRef(el, category.id)"
-        :data="category.websites"
-        row-key="id"
+      <el-table-column
+        label="Logo"
+        width="80"
       >
-        <el-table-column
-          label="Logo"
-          width="80"
-        >
-          <template #default="{ row }">
-            <el-avatar
-              v-if="row.logo"
-              :src="row.logo"
-              :size="32"
-            />
-            <el-avatar
-              v-else
-              :size="32"
-            >
-              {{ row.websiteName.charAt(0) }}
-            </el-avatar>
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="websiteName"
-          label="网站名称"
-        />
-        <el-table-column
-          prop="url"
-          label="URL"
-          show-overflow-tooltip
-        />
-        <el-table-column
-          label="操作"
-          width="160"
-        >
-          <template #default="{ row }">
-            <el-button
-              type="primary"
-              link
-              @click="openDialog(row)"
-            >
-              编辑
-            </el-button>
-            <el-button
-              type="danger"
-              link
-              @click="remove(row)"
-            >
-              删除
-            </el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-    </el-card>
+        <template #default="{ row }">
+          <el-avatar
+            v-if="row.logo"
+            :src="row.logo"
+            :size="32"
+          />
+          <el-avatar
+            v-else
+            :size="32"
+          >
+            {{ row.websiteName.charAt(0) }}
+          </el-avatar>
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="websiteName"
+        label="网站名称"
+      />
+      <el-table-column
+        prop="url"
+        label="URL"
+        show-overflow-tooltip
+      />
+      <el-table-column
+        label="操作"
+        width="160"
+      >
+        <template #default="{ row }">
+          <el-button
+            type="primary"
+            link
+            @click="openDialog(row)"
+          >
+            编辑
+          </el-button>
+          <el-button
+            type="danger"
+            link
+            @click="remove(row)"
+          >
+            删除
+          </el-button>
+        </template>
+      </el-table-column>
+    </el-table>
   </el-card>
 
   <el-dialog
@@ -161,15 +139,15 @@
 </template>
 
 <script setup>
-import { ref, onMounted, reactive, computed, nextTick, inject } from 'vue';
+import { ref, onMounted, reactive, computed, nextTick, inject, watch } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { Plus } from '@element-plus/icons-vue';
 import Sortable from 'sortablejs';
 import { useApi } from '../../../composables/useApi.js';
-
-const events = inject('adminEventBus', null);
 import Editor from '@toast-ui/editor';
 import '@toast-ui/editor/dist/toastui-editor.css';
+
+const events = inject('adminEventBus', null);
 
 const { get, put, del } = useApi();
 const categories = ref([]);
@@ -177,10 +155,11 @@ const websites = ref([]);
 const loading = ref(false);
 const visible = ref(false);
 const editingId = ref(null);
-const filterCategory = ref(null);
 const fileList = ref([]);
-const tableRefs = new Map();
+const tableRef = ref(null);
 let editor = null;
+
+const selectedCategoryId = computed(() => events?.selectedCategoryId?.value || null);
 
 const formData = reactive({
   websiteName: '',
@@ -191,19 +170,20 @@ const formData = reactive({
   removeLogo: false,
 });
 
-const dialogTitle = computed(() => (editingId.value ? '编辑网站' : '新增网站'));
-
-const filteredCategories = computed(() => {
-  return categories.value
-    .map(category => ({
-      ...category,
-      websites: websites.value.filter(w => {
-        if (filterCategory.value && w.categoryId !== filterCategory.value) return false;
-        return w.categoryId === category.id;
-      }),
-    }))
-    .filter(category => category.websites.length > 0 || !filterCategory.value);
+const currentCategory = computed(() => {
+  return categories.value.find(c => c.id === selectedCategoryId.value) || null;
 });
+
+const panelTitle = computed(() => {
+  return currentCategory.value ? `网站管理：${currentCategory.value.categoryName}` : '网站管理';
+});
+
+const filteredWebsites = computed(() => {
+  if (!selectedCategoryId.value) return [];
+  return websites.value.filter(w => w.categoryId === selectedCategoryId.value);
+});
+
+const dialogTitle = computed(() => (editingId.value ? '编辑网站' : '新增网站'));
 
 async function loadData() {
   loading.value = true;
@@ -215,58 +195,54 @@ async function loadData() {
     if (catRes.code === 0) categories.value = catRes.data;
     if (webRes.code === 0) websites.value = webRes.data.list;
     await nextTick();
-    initSortables();
+    initSortable();
   } finally {
     loading.value = false;
   }
 }
 
-function setTableRef(el, categoryId) {
-  if (el) {
-    tableRefs.set(categoryId, el);
-  }
+function initSortable() {
+  const el = tableRef.value?.$el.querySelector('.el-table__body tbody');
+  if (!el) return;
+
+  Sortable.create(el, {
+    animation: 150,
+    onEnd: async (evt) => {
+      const newData = [...filteredWebsites.value];
+      const moved = newData.splice(evt.oldIndex, 1)[0];
+      newData.splice(evt.newIndex, 0, moved);
+
+      websites.value = websites.value.map(w => {
+        const idx = newData.findIndex(item => item.id === w.id);
+        if (idx >= 0) {
+          return { ...w, displayOrder: idx + 1 };
+        }
+        return w;
+      });
+
+      const ids = newData.map(item => item.id);
+      const res = await put(`/api/admin/categories/${selectedCategoryId.value}/websites/order`, { ids });
+      if (res.code === 0) {
+        ElMessage.success('排序已保存');
+        notifyAuditLogRefresh();
+      } else {
+        ElMessage.error(res.message);
+        await loadData();
+      }
+    },
+  });
 }
+
+watch(selectedCategoryId, () => {
+  nextTick(() => {
+    initSortable();
+  });
+});
 
 function notifyAuditLogRefresh() {
   if (events && typeof events.refreshAuditLogs === 'function') {
     events.refreshAuditLogs();
   }
-}
-
-function initSortables() {
-  tableRefs.forEach((table, categoryId) => {
-    const el = table.$el.querySelector('.el-table__body tbody');
-    if (!el) return;
-
-    Sortable.create(el, {
-      animation: 150,
-      onEnd: async (evt) => {
-        const category = filteredCategories.value.find(c => c.id === categoryId);
-        if (!category) return;
-        const newData = [...category.websites];
-        const moved = newData.splice(evt.oldIndex, 1)[0];
-        newData.splice(evt.newIndex, 0, moved);
-
-        websites.value = websites.value.map(w => {
-          const idx = newData.findIndex(item => item.id === w.id);
-          if (idx >= 0) {
-            return { ...w, displayOrder: idx + 1 };
-          }
-          return w;
-        });
-
-        const ids = newData.map(item => item.id);
-        const res = await put(`/api/admin/categories/${categoryId}/websites/order`, { ids });
-        if (res.code === 0) {
-          ElMessage.success('排序已保存');
-          notifyAuditLogRefresh();
-        } else {
-          ElMessage.error(res.message);
-          await loadData();
-        }
-      },
-    });
-  });
 }
 
 async function initEditor(value) {
@@ -293,7 +269,7 @@ async function openDialog(row) {
   editingId.value = row ? row.id : null;
   formData.websiteName = row ? row.websiteName : '';
   formData.url = row ? row.url : '';
-  formData.categoryId = row ? row.categoryId : (categories.value[0]?.id || null);
+  formData.categoryId = row ? row.categoryId : (selectedCategoryId.value || categories.value[0]?.id || null);
   formData.description = row ? (row.description || '') : '';
   formData.logo = row ? row.logo : '';
   formData.removeLogo = false;
@@ -360,13 +336,6 @@ onMounted(loadData);
 </script>
 
 <style scoped>
-.filter-select {
-  margin-bottom: 16px;
-  width: 240px;
-}
-.category-card {
-  margin-bottom: 16px;
-}
 .editor-wrapper {
   width: 100%;
 }

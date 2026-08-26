@@ -18,11 +18,22 @@
       row-key="id"
       size="large"
       :data="categories"
+      :row-class-name="rowClassName"
+      @row-click="handleRowClick"
     >
       <el-table-column
         prop="categoryName"
         label="分类名称"
-      />
+      >
+        <template #default="{ row }">
+          <span
+            class="category-name"
+            :class="{ active: selectedId === row.id }"
+          >
+            {{ row.categoryName }}
+          </span>
+        </template>
+      </el-table-column>
       <el-table-column
         v-if="showSort"
         prop="displayOrder"
@@ -37,14 +48,14 @@
           <el-button
             type="primary"
             link
-            @click="openDialog(row)"
+            @click.stop="openDialog(row)"
           >
             编辑
           </el-button>
           <el-button
             type="danger"
             link
-            @click="remove(row)"
+            @click.stop="remove(row)"
           >
             删除
           </el-button>
@@ -107,6 +118,8 @@ const editingId = ref(null);
 const formData = reactive({ categoryName: '' });
 const tableRef = ref(null);
 
+const selectedId = computed(() => events?.selectedCategoryId?.value || null);
+
 const dialogTitle = computed(() => (editingId.value ? '编辑分类' : '新建分类'));
 
 async function loadCategories() {
@@ -117,10 +130,34 @@ async function loadCategories() {
       categories.value = res.data;
       await nextTick();
       initSortable();
+      ensureSelectedCategory();
     }
   } finally {
     loading.value = false;
   }
+}
+
+function ensureSelectedCategory() {
+  if (!events || typeof events.selectCategory !== 'function') return;
+
+  const list = categories.value;
+  if (list.length === 0) return;
+
+  const current = selectedId.value;
+  const exists = list.some(c => c.id === current);
+  if (!exists) {
+    events.selectCategory(list[0].id);
+  }
+}
+
+function handleRowClick(row) {
+  if (events && typeof events.selectCategory === 'function') {
+    events.selectCategory(row.id);
+  }
+}
+
+function rowClassName({ row }) {
+  return selectedId.value === row.id ? 'selected-row' : '';
 }
 
 function notifyAuditLogRefresh() {
@@ -200,3 +237,20 @@ async function remove(row) {
 
 onMounted(loadCategories);
 </script>
+
+<style scoped>
+.category-name {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+.category-name:hover {
+  background-color: var(--pn-bg-hover);
+}
+.category-name.active {
+  font-weight: 700;
+  color: var(--pn-accent);
+}
+</style>
