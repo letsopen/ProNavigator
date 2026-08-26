@@ -54,8 +54,11 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch, inject } from 'vue';
+import { ElMessage } from 'element-plus';
 import { useApi } from '../../../composables/useApi.js';
+
+const events = inject('adminEventBus');
 
 const { get } = useApi();
 const loading = ref(false);
@@ -71,11 +74,19 @@ async function loadLogs() {
     if (res.code === 0) {
       logs.value = res.data.list;
       total.value = res.data.total;
+    } else {
+      ElMessage.error(res.message || '加载审计日志失败');
     }
+  } catch (err) {
+    ElMessage.error('加载审计日志失败');
   } finally {
     loading.value = false;
   }
 }
+
+watch(() => events?.refreshSignal?.value, () => {
+  loadLogs();
+}, { immediate: true });
 
 onMounted(loadLogs);
 </script>

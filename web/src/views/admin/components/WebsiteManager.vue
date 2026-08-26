@@ -161,11 +161,13 @@
 </template>
 
 <script setup>
-import { ref, onMounted, reactive, computed, nextTick } from 'vue';
+import { ref, onMounted, reactive, computed, nextTick, inject } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { Plus } from '@element-plus/icons-vue';
 import Sortable from 'sortablejs';
 import { useApi } from '../../../composables/useApi.js';
+
+const events = inject('adminEventBus', null);
 import Editor from '@toast-ui/editor';
 import '@toast-ui/editor/dist/toastui-editor.css';
 
@@ -225,6 +227,12 @@ function setTableRef(el, categoryId) {
   }
 }
 
+function notifyAuditLogRefresh() {
+  if (events && typeof events.refreshAuditLogs === 'function') {
+    events.refreshAuditLogs();
+  }
+}
+
 function initSortables() {
   tableRefs.forEach((table, categoryId) => {
     const el = table.$el.querySelector('.el-table__body tbody');
@@ -251,6 +259,7 @@ function initSortables() {
         const res = await put(`/api/admin/categories/${categoryId}/websites/order`, { ids });
         if (res.code === 0) {
           ElMessage.success('排序已保存');
+          notifyAuditLogRefresh();
         } else {
           ElMessage.error(res.message);
           await loadData();
@@ -321,6 +330,7 @@ async function onConfirm() {
       ElMessage.success(dialogTitle.value + '成功');
       visible.value = false;
       await loadData();
+      notifyAuditLogRefresh();
     } else {
       ElMessage.error(data.message);
     }
@@ -340,6 +350,7 @@ async function remove(row) {
   if (res.code === 0) {
     ElMessage.success('删除成功');
     await loadData();
+    notifyAuditLogRefresh();
   } else {
     ElMessage.error(res.message);
   }

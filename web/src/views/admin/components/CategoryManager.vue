@@ -16,6 +16,7 @@
       ref="tableRef"
       v-loading="loading"
       row-key="id"
+      size="large"
       :data="categories"
     >
       <el-table-column
@@ -83,10 +84,12 @@
 </template>
 
 <script setup>
-import { ref, onMounted, reactive, computed, nextTick } from 'vue';
+import { ref, onMounted, reactive, computed, nextTick, inject } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import Sortable from 'sortablejs';
 import { useApi } from '../../../composables/useApi.js';
+
+const events = inject('adminEventBus', null);
 
 const { get, post, put, del } = useApi();
 const loading = ref(false);
@@ -112,6 +115,12 @@ async function loadCategories() {
   }
 }
 
+function notifyAuditLogRefresh() {
+  if (events && typeof events.refreshAuditLogs === 'function') {
+    events.refreshAuditLogs();
+  }
+}
+
 function initSortable() {
   const el = tableRef.value?.$el.querySelector('.el-table__body tbody');
   if (!el) return;
@@ -128,6 +137,7 @@ function initSortable() {
       const res = await put('/api/admin/categories/order', { ids });
       if (res.code === 0) {
         ElMessage.success('排序已保存');
+        notifyAuditLogRefresh();
       } else {
         ElMessage.error(res.message);
         await loadCategories();
@@ -157,6 +167,7 @@ async function onConfirm() {
     ElMessage.success(dialogTitle.value + '成功');
     visible.value = false;
     await loadCategories();
+    notifyAuditLogRefresh();
   } else {
     ElMessage.error(res.message);
   }
@@ -173,6 +184,7 @@ async function remove(row) {
   if (res.code === 0) {
     ElMessage.success('删除成功');
     await loadCategories();
+    notifyAuditLogRefresh();
   } else {
     ElMessage.error(res.message);
   }
