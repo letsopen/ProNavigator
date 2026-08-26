@@ -6,6 +6,7 @@ const adminController = require('../controllers/adminController');
 const categoryController = require('../controllers/categoryController');
 const websiteController = require('../controllers/websiteController');
 const sortController = require('../controllers/sortController');
+const auditLogController = require('../controllers/auditLogController');
 
 const router = express.Router();
 
@@ -25,5 +26,6 @@ router.get('/websites/:id', authenticateToken, websiteController.getWebsite);
 router.put('/websites/:id', authenticateToken, upload.single('logo'), websiteController.updateRules, validate, websiteController.updateWebsite);
 router.delete('/websites/:id', authenticateToken, websiteController.deleteWebsite);
 router.put('/categories/:categoryId/websites/order', authenticateToken, sortController.websiteSortRules, validate, sortController.sortWebsites);
+router.get('/audit-logs', authenticateToken, auditLogController.listRules, validate, auditLogController.listLogs);
 
 module.exports = router;

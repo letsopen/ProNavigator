@@ -10,7 +10,7 @@
 
 **技术栈**：Node.js + Express 前后端一体式，SQLite 数据库，Docker 部署，GitHub Actions 构建镜像。
 
-**前端 UI 框架**：腾讯 TDesign + Vue（管理后台及公开页面均使用 TDesign + Vue 构建）。
+**前端 UI 框架**：Vue + Element Plus（管理后台及公开页面均使用 Vue + Element Plus 构建）。
 
 ## 2. 用户角色
 

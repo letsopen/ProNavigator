@@ -12,6 +12,9 @@
         <el-menu-item index="/admin/websites">
           网站管理
         </el-menu-item>
+        <el-menu-item index="/admin/audit-logs">
+          审计日志
+        </el-menu-item>
         <div class="flex-spacer" />
         <el-menu-item
           index="/admin/password"
@@ -45,6 +48,7 @@ const router = useRouter();
 const activeMenu = computed(() => {
   if (route.path.startsWith('/admin/categories')) return '/admin/categories';
   if (route.path.startsWith('/admin/websites')) return '/admin/websites';
+  if (route.path.startsWith('/admin/audit-logs')) return '/admin/audit-logs';
   return '';
 });
 

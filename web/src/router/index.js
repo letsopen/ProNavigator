@@ -5,6 +5,7 @@ import Login from '../views/admin/Login.vue';
 import Categories from '../views/admin/Categories.vue';
 import Websites from '../views/admin/Websites.vue';
 import Password from '../views/admin/Password.vue';
+import AuditLogs from '../views/admin/AuditLogs.vue';
 
 const routes = [
   { path: '/', component: Home, meta: { title: 'ProNavigator' } },
@@ -13,6 +14,7 @@ const routes = [
   { path: '/admin/categories', component: Categories, meta: { title: '分类管理', requiresAuth: true } },
   { path: '/admin/websites', component: Websites, meta: { title: '网站管理', requiresAuth: true } },
   { path: '/admin/password', component: Password, meta: { title: '修改密码', requiresAuth: true } },
+  { path: '/admin/audit-logs', component: AuditLogs, meta: { title: '审计日志', requiresAuth: true } },
 ];
 
 const router = createRouter({
