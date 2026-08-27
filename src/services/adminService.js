@@ -46,8 +46,7 @@ function login(username, password) {
 
   const token = jwt.sign(
     { id: row.id, username: row.username },
-    config.jwtSecret,
-    { expiresIn: config.jwtExpiresIn }
+    config.jwtSecret
   );
 
   return {

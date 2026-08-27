@@ -8,15 +8,7 @@
         <a
           class="brand"
           href="/"
-          target="_blank"
         >
-          <el-avatar
-            :size="32"
-            shape="square"
-            class="brand-logo"
-          >
-            P
-          </el-avatar>
           <span class="brand-name">ProNavigator</span>
         </a>
         <el-menu
@@ -128,12 +120,7 @@ async function logout() {
   text-decoration: none;
   cursor: pointer;
 }
-.brand-logo {
-  background: var(--pn-bg-elevated);
-  color: var(--pn-accent);
-  font-weight: 700;
-  border-radius: 8px;
-}
+
 .brand-name {
   font-size: 18px;
   font-weight: 600;

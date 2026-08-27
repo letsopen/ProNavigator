@@ -7,14 +7,10 @@
       >
         <template #header>
           <div class="login-header">
-            <el-avatar
-              :size="48"
-              shape="square"
-              class="login-logo"
+            <h1
+              class="login-title"
+              @click="goHome"
             >
-              P
-            </el-avatar>
-            <h1 class="login-title">
               ProNavigator
             </h1>
             <p class="login-subtitle">
@@ -57,11 +53,6 @@
           </el-form-item>
         </el-form>
       </el-card>
-    </div>
-    <div class="login-footer">
-      <el-link @click="goHome">
-        返回首页
-      </el-link>
     </div>
   </div>
 </template>
@@ -147,14 +138,9 @@ async function onSubmit() {
   justify-content: center;
   text-align: center;
 }
-.login-logo {
-  background: var(--pn-bg-elevated);
-  color: var(--pn-accent);
-  font-weight: 700;
-  border-radius: 10px;
-  margin-bottom: 16px;
-}
 .login-title {
+  cursor: pointer;
+
   margin: 0;
   font-size: 22px;
   font-weight: 600;
@@ -165,10 +151,7 @@ async function onSubmit() {
   font-size: 14px;
   color: var(--pn-text-muted);
 }
-.login-footer {
-  padding: 16px;
-  text-align: center;
-}
+
 .login-input :deep(.el-input__wrapper) {
   padding: 0;
   border-radius: 8px;

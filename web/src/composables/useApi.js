@@ -14,6 +14,11 @@ export function useApi() {
     }
 
     const res = await fetch(url, { ...options, headers });
+    if (res.status === 401) {
+      localStorage.removeItem('nav_token');
+      window.location.href = '/admin/login';
+      return Promise.reject(new Error('登录已失效，请重新登录'));
+    }
     return res.json();
   }
 
