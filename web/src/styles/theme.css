@@ -212,3 +212,173 @@ body,
   border-color: #e4e4e7;
   color: #000000;
 }
+
+/* Toast UI Editor 暗色主题与 Zinc 风格统一 */
+.toastui-editor-dark.toastui-editor-defaultUI {
+  border-color: var(--pn-border-color);
+  color: var(--pn-text-primary);
+}
+
+.toastui-editor-dark .toastui-editor-md-container,
+.toastui-editor-dark .toastui-editor-ww-container {
+  background-color: var(--pn-bg-card);
+}
+
+.toastui-editor-dark .toastui-editor-defaultUI-toolbar {
+  background-color: var(--pn-bg-elevated);
+  border-bottom-color: var(--pn-border-color);
+}
+
+.toastui-editor-dark .toastui-editor-toolbar-icons {
+  border-color: var(--pn-bg-elevated);
+}
+
+.toastui-editor-dark .toastui-editor-toolbar-icons:not(:disabled):hover {
+  background-color: var(--pn-bg-hover);
+  border-color: var(--pn-bg-hover);
+}
+
+.toastui-editor-dark .toastui-editor-toolbar-divider {
+  background-color: var(--pn-border-color);
+}
+
+.toastui-editor-dark .toastui-editor-main .toastui-editor-md-splitter {
+  background-color: var(--pn-border-color);
+}
+
+.toastui-editor-dark .toastui-editor-md-tab-container {
+  background-color: var(--pn-bg-elevated);
+  border-bottom-color: var(--pn-border-color);
+}
+
+.toastui-editor-dark .toastui-editor-md-tab-container .tab-item {
+  border-color: var(--pn-border-color);
+  background-color: var(--pn-bg-hover);
+  color: var(--pn-text-muted);
+}
+
+.toastui-editor-dark .toastui-editor-md-tab-container .tab-item.active {
+  border-bottom-color: var(--pn-bg-card);
+  background-color: var(--pn-bg-card);
+  color: var(--pn-text-primary);
+}
+
+.toastui-editor-dark .toastui-editor-mode-switch {
+  border-top-color: var(--pn-border-color);
+  background-color: var(--pn-bg-card);
+}
+
+.toastui-editor-dark .toastui-editor-mode-switch .tab-item {
+  border-color: var(--pn-border-color);
+  background-color: var(--pn-bg-elevated);
+  color: var(--pn-text-muted);
+}
+
+.toastui-editor-dark .toastui-editor-mode-switch .tab-item.active {
+  border-top-color: var(--pn-bg-card);
+  background-color: var(--pn-bg-card);
+  color: var(--pn-text-primary);
+}
+
+.toastui-editor-dark .toastui-editor-popup,
+.toastui-editor-dark .toastui-editor-context-menu {
+  background-color: var(--pn-bg-card);
+  border-color: var(--pn-border-color);
+}
+
+.toastui-editor-dark .toastui-editor-popup-add-heading ul li:hover,
+.toastui-editor-dark .toastui-editor-popup-body .toastui-editor-file-select-button:hover {
+  background-color: var(--pn-bg-hover);
+}
+
+.toastui-editor-dark .toastui-editor-popup-body label {
+  color: var(--pn-text-secondary);
+}
+
+.toastui-editor-dark .toastui-editor-popup-body input[type='text'] {
+  background-color: transparent;
+  color: var(--pn-text-primary);
+  border-color: var(--pn-border-color);
+}
+
+.toastui-editor-dark .toastui-editor-popup-body input[type='text']:focus {
+  outline-color: var(--pn-accent);
+}
+
+.toastui-editor-dark .toastui-editor-popup-body input[type='text'].disabled {
+  color: var(--pn-text-muted);
+  border-color: var(--pn-border-color);
+  background-color: rgba(63, 63, 70, 0.4);
+}
+
+.toastui-editor-dark .toastui-editor-popup-body .toastui-editor-file-name {
+  border-color: var(--pn-border-color);
+  color: var(--pn-text-primary);
+}
+
+.toastui-editor-dark .toastui-editor-popup-body .toastui-editor-file-select-button {
+  border-color: var(--pn-border-color);
+  background-color: var(--pn-bg-elevated);
+  color: var(--pn-text-primary);
+}
+
+.toastui-editor-dark .toastui-editor-popup-add-image .toastui-editor-tabs .tab-item {
+  color: var(--pn-text-primary);
+}
+
+.toastui-editor-dark .toastui-editor-popup-add-image .toastui-editor-tabs .tab-item.active {
+  color: var(--pn-accent);
+  border-bottom-color: var(--pn-accent);
+}
+
+.toastui-editor-dark.toastui-editor-defaultUI .toastui-editor-close-button {
+  color: var(--pn-text-primary);
+  border-color: var(--pn-border-color);
+  background-color: var(--pn-bg-elevated);
+}
+
+.toastui-editor-dark.toastui-editor-defaultUI .toastui-editor-close-button:hover {
+  border-color: var(--pn-text-muted);
+}
+
+.toastui-editor-dark.toastui-editor-defaultUI .toastui-editor-ok-button {
+  color: var(--pn-bg-base);
+  background-color: var(--pn-accent);
+}
+
+.toastui-editor-dark.toastui-editor-defaultUI .toastui-editor-ok-button:hover {
+  color: var(--pn-bg-base);
+  background-color: var(--pn-accent-hover);
+}
+
+.toastui-editor-dark .toastui-editor-popup-add-table .toastui-editor-table-cell {
+  border-color: var(--pn-border-color);
+  background-color: var(--pn-bg-card);
+}
+
+.toastui-editor-dark .toastui-editor-popup-add-table .toastui-editor-table-cell.header {
+  border-color: var(--pn-border-color);
+  background-color: var(--pn-bg-elevated);
+}
+
+.toastui-editor-dark .toastui-editor-popup-add-table .toastui-editor-table-selection-layer {
+  border-color: rgba(212, 212, 216, 0.4);
+  background-color: rgba(212, 212, 216, 0.1);
+}
+
+.toastui-editor-dark .toastui-editor-popup-add-table .toastui-editor-table-description {
+  color: var(--pn-text-primary);
+}
+
+.toastui-editor-dark .toastui-editor-contents {
+  color: var(--pn-text-primary);
+}
+
+.toastui-editor-dark .toastui-editor-contents p {
+  color: var(--pn-text-primary);
+}
+
+.toastui-editor-dark .ProseMirror {
+  color: var(--pn-text-primary);
+  background-color: var(--pn-bg-card);
+}

@@ -146,6 +146,7 @@ import Sortable from 'sortablejs';
 import { useApi } from '../../../composables/useApi.js';
 import Editor from '@toast-ui/editor';
 import '@toast-ui/editor/dist/toastui-editor.css';
+import '@toast-ui/editor/dist/theme/toastui-editor-dark.css';
 
 const events = inject('adminEventBus', null);
 
