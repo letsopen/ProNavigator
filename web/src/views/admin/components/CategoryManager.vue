@@ -24,7 +24,6 @@
       <el-table-column
         prop="categoryName"
         label="分类名称"
-        width="50%"
       >
         <template #default="{ row }">
           <span
@@ -43,7 +42,7 @@
       />
       <el-table-column
         label="操作"
-        width="50%"
+        width="160"
       >
         <template #default="{ row }">
           <el-button
