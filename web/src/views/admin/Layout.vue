@@ -5,7 +5,11 @@
   >
     <el-header class="admin-header">
       <div class="pn-container header-inner">
-        <div class="brand">
+        <a
+          class="brand"
+          href="/"
+          target="_blank"
+        >
           <el-avatar
             :size="32"
             shape="square"
@@ -14,7 +18,7 @@
             P
           </el-avatar>
           <span class="brand-name">ProNavigator</span>
-        </div>
+        </a>
         <el-menu
           :default-active="activeTab"
           mode="horizontal"
@@ -52,12 +56,6 @@
     <el-main class="admin-main pn-container">
       <slot />
     </el-main>
-
-    <el-footer class="admin-footer">
-      <el-link @click="goHome">
-        返回首页
-      </el-link>
-    </el-footer>
   </el-container>
 </template>
 
@@ -83,9 +81,6 @@ function goPassword() {
   router.push('/admin/password');
 }
 
-function goHome() {
-  router.push('/');
-}
 
 async function logout() {
   const token = localStorage.getItem('nav_token');
@@ -126,6 +121,8 @@ async function logout() {
   align-items: center;
   gap: 12px;
   margin-right: 48px;
+  text-decoration: none;
+  cursor: pointer;
 }
 .brand-logo {
   background: var(--pn-bg-elevated);
@@ -147,11 +144,7 @@ async function logout() {
   padding-top: 24px;
   padding-bottom: 24px;
 }
-.admin-footer {
-  padding: 16px;
-  text-align: center;
-  background: transparent;
-}
+
 .flex-spacer {
   flex: 1;
 }
