@@ -131,7 +131,7 @@
         取消
       </el-button>
       <el-button
-        type="primary"
+        class="action-button"
         @click="onConfirm"
       >
         保存
