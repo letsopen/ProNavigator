@@ -7,17 +7,20 @@ const { sendSuccess, AppError } = require('../utils/response');
 const categorySortRules = [
   body('ids').isArray({ min: 1 }).withMessage('排序 ID 数组不能为空'),
   body('ids.*').isInt().withMessage('所有 ID 必须为整数').toInt(),
+  body('movedId').isInt().withMessage('被拖拽记录 ID 必须为整数'),
 ];
 
 const websiteSortRules = [
   body('ids').isArray({ min: 1 }).withMessage('排序 ID 数组不能为空'),
   body('ids.*').isInt().withMessage('所有 ID 必须为整数').toInt(),
+  body('movedId').isInt().withMessage('被拖拽记录 ID 必须为整数'),
 ];
 
 function sortCategories(req, res, next) {
   try {
-    const { ids } = req.body;
+    const { ids, movedId } = req.body;
     const parsedIds = ids.map(id => parseInt(id, 10));
+    const parsedMovedId = parseInt(movedId, 10);
 
     const existingCategories = categoryService.listCategories();
     const existingIds = new Set(existingCategories.map(c => c.id));
@@ -30,6 +33,7 @@ function sortCategories(req, res, next) {
     auditLogService.log({
       action: 'SORT_CATEGORIES',
       targetType: 'CATEGORY',
+      targetId: parsedMovedId,
       operator: req.user.username,
     });
     sendSuccess(res, null, '分类排序已保存');
@@ -41,8 +45,9 @@ function sortCategories(req, res, next) {
 function sortWebsites(req, res, next) {
   try {
     const categoryId = parseInt(req.params.categoryId, 10);
-    const { ids } = req.body;
+    const { ids, movedId } = req.body;
     const parsedIds = ids.map(id => parseInt(id, 10));
+    const parsedMovedId = parseInt(movedId, 10);
 
     if (!categoryService.categoryExists(categoryId)) {
       throw new AppError('所属分类不存在', 3004, 400);
@@ -51,8 +56,8 @@ function sortWebsites(req, res, next) {
     websiteService.reorderWebsites(categoryId, parsedIds);
     auditLogService.log({
       action: 'SORT_WEBSITES',
-      targetType: 'CATEGORY',
-      targetId: categoryId,
+      targetType: 'WEBSITE',
+      targetId: parsedMovedId,
       operator: req.user.username,
     });
     sendSuccess(res, null, '网站排序已保存');

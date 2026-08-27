@@ -180,7 +180,7 @@ function initSortable() {
       categories.value = newData;
 
       const ids = newData.map(item => item.id);
-      const res = await put('/api/admin/categories/order', { ids });
+      const res = await put('/api/admin/categories/order', { ids, movedId: moved.id });
       if (res.code === 0) {
         ElMessage.success('排序已保存');
         notifyAuditLogRefresh();
