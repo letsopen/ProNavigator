@@ -378,7 +378,22 @@ body,
   color: var(--pn-text-primary);
 }
 
+.toastui-editor-dark .toastui-editor-main-container {
+  color: var(--pn-text-primary);
+}
+
+.toastui-editor-dark .toastui-editor-md-container .toastui-editor,
+.toastui-editor-dark .toastui-editor-ww-container .toastui-editor {
+  color: var(--pn-text-primary);
+  background-color: transparent;
+}
+
 .toastui-editor-dark .ProseMirror {
   color: var(--pn-text-primary);
-  background-color: var(--pn-bg-card);
+  background-color: transparent;
+}
+
+.toastui-editor-dark .ProseMirror .placeholder,
+.toastui-editor-dark .toastui-editor-contents-placeholder::before {
+  color: var(--pn-text-muted);
 }

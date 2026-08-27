@@ -77,8 +77,7 @@ function formatLocalTime(value) {
   const utcDate = iso.endsWith('Z') ? new Date(iso) : new Date(`${iso}Z`);
   if (Number.isNaN(utcDate.getTime())) return value;
 
-  const offset = new Date().getTimezoneOffset();
-  const localDate = new Date(utcDate.getTime() - offset * 60 * 1000);
+  const localDate = new Date(utcDate.getTime());
 
   const year = localDate.getFullYear();
   const month = String(localDate.getMonth() + 1).padStart(2, '0');
