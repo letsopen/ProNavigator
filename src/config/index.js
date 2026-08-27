@@ -9,6 +9,7 @@ const config = {
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || '2h',
   logLevel: process.env.LOG_LEVEL || 'info',
   nodeEnv: process.env.NODE_ENV || 'development',
+  timezone: process.env.TZ || Intl.DateTimeFormat().resolvedOptions().timeZone,
 };
 
 module.exports = config;

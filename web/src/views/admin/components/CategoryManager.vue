@@ -4,7 +4,7 @@
       <div class="pn-card-header">
         <span>分类管理</span>
         <el-button
-          type="primary"
+          class="action-button"
           @click="openDialog()"
         >
           新建分类
@@ -24,6 +24,7 @@
       <el-table-column
         prop="categoryName"
         label="分类名称"
+        width="160"
       >
         <template #default="{ row }">
           <span
@@ -42,7 +43,7 @@
       />
       <el-table-column
         label="操作"
-        width="160"
+        width="80"
       >
         <template #default="{ row }">
           <el-button

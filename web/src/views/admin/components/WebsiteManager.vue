@@ -4,7 +4,7 @@
       <div class="pn-card-header">
         <span>{{ panelTitle }}</span>
         <el-button
-          type="primary"
+          class="action-button"
           @click="openDialog()"
         >
           新增网站
