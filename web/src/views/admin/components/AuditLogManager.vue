@@ -38,7 +38,11 @@
       <el-table-column
         prop="createTime"
         label="操作时间"
-      />
+      >
+        <template #default="{ row }">
+          {{ formatLocalTime(row.createTime) }}
+        </template>
+      </el-table-column>
     </el-table>
 
     <el-pagination
@@ -66,6 +70,25 @@ const logs = ref([]);
 const total = ref(0);
 const page = ref(1);
 const size = ref(20);
+
+function formatLocalTime(value) {
+  if (!value) return value;
+  const iso = `${value}`.trim();
+  const utcDate = iso.endsWith('Z') ? new Date(iso) : new Date(`${iso}Z`);
+  if (Number.isNaN(utcDate.getTime())) return value;
+
+  const offset = new Date().getTimezoneOffset();
+  const localDate = new Date(utcDate.getTime() - offset * 60 * 1000);
+
+  const year = localDate.getFullYear();
+  const month = String(localDate.getMonth() + 1).padStart(2, '0');
+  const day = String(localDate.getDate()).padStart(2, '0');
+  const hour = String(localDate.getHours()).padStart(2, '0');
+  const minute = String(localDate.getMinutes()).padStart(2, '0');
+  const second = String(localDate.getSeconds()).padStart(2, '0');
+
+  return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
+}
 
 async function loadLogs() {
   loading.value = true;
