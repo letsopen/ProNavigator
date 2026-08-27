@@ -14,45 +14,43 @@
             ref="form"
             :model="formData"
             :rules="rules"
-            label-width="100px"
           >
-            <el-form-item
-              label="旧密码"
-              prop="oldPassword"
-            >
+            <el-form-item prop="oldPassword">
               <el-input
                 v-model="formData.oldPassword"
+                class="password-input"
+                size="large"
                 type="password"
-                placeholder="请输入旧密码"
+                placeholder="旧密码"
               />
             </el-form-item>
-            <el-form-item
-              label="新密码"
-              prop="newPassword"
-            >
+            <el-form-item prop="newPassword">
               <el-input
                 v-model="formData.newPassword"
+                class="password-input"
+                size="large"
                 type="password"
-                placeholder="请输入新密码"
+                placeholder="新密码"
               />
             </el-form-item>
-            <el-form-item
-              label="确认新密码"
-              prop="confirmPassword"
-            >
+            <el-form-item prop="confirmPassword">
               <el-input
                 v-model="formData.confirmPassword"
+                class="password-input"
+                size="large"
                 type="password"
-                placeholder="请再次输入新密码"
+                placeholder="确认新密码"
               />
             </el-form-item>
-            <el-form-item>
+            <el-form-item class="submit-item">
               <el-button
+                class="password-button"
+                size="large"
                 type="primary"
                 :loading="submitting"
                 @click="onSubmit"
               >
-                保存
+                确认修改
               </el-button>
             </el-form-item>
           </el-form>
@@ -125,4 +123,28 @@ async function onSubmit() {
 </script>
 
 <style scoped>
+.password-input :deep(.el-input__wrapper) {
+  padding: 0;
+  border-radius: 8px;
+}
+.password-input :deep(.el-input__inner) {
+  text-align: center;
+  font-weight: 700;
+}
+.password-button {
+  width: 100%;
+  border-radius: 8px;
+  background-color: #ffffff;
+  border-color: #ffffff;
+  color: #09090b;
+  font-weight: 700;
+}
+.password-button:hover {
+  background-color: #e4e4e7;
+  border-color: #e4e4e7;
+  color: #09090b;
+}
+.submit-item :deep(.el-form-item__content) {
+  justify-content: center;
+}
 </style>

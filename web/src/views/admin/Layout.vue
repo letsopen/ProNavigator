@@ -36,20 +36,22 @@
           >
             审计日志
           </el-menu-item>
-          <div class="flex-spacer" />
-          <el-menu-item
-            index="password"
+        </el-menu>
+        <div class="header-actions">
+          <div
+            class="header-action"
+            :class="{ 'is-active': isPasswordActive }"
             @click="goPassword"
           >
             修改密码
-          </el-menu-item>
-          <el-menu-item
-            index="logout"
+          </div>
+          <div
+            class="header-action"
             @click="logout"
           >
             退出登录
-          </el-menu-item>
-        </el-menu>
+          </div>
+        </div>
       </div>
     </el-header>
 
@@ -72,6 +74,8 @@ const activeTab = computed(() => {
   if (tab === 'content' || tab === 'audit-logs') return tab;
   return 'content';
 });
+
+const isPasswordActive = computed(() => route.path === '/admin/password');
 
 function switchTab(tab) {
   router.push({ path: '/admin', query: { ...route.query, tab } });
@@ -144,8 +148,21 @@ async function logout() {
   padding-top: 24px;
   padding-bottom: 24px;
 }
-
-.flex-spacer {
-  flex: 1;
+.header-actions {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+}
+.header-action {
+  padding: 0 16px;
+  font-size: var(--el-font-size-base);
+  color: var(--el-menu-text-color);
+  cursor: pointer;
+  transition: color 0.3s;
+  white-space: nowrap;
+}
+.header-action:hover,
+.header-action.is-active {
+  color: var(--el-menu-hover-text-color);
 }
 </style>
