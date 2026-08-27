@@ -2,6 +2,29 @@
 
 一个基于 Node.js + Express + SQLite 构建的公司内部导航站（ProNavigator）。支持管理员维护分类与网站信息，访客无需登录即可浏览首页并查看网站详情。
 
+
+## 界面截图
+
+<details>
+<summary>点击查看界面截图</summary>
+
+### 首页
+![首页](./screenshots/home.png)
+
+### 登录页
+![登录页](./screenshots/login.png)
+
+### 内容管理
+![内容管理](./screenshots/content-manage.png)
+
+### 审计日志
+![审计日志](./screenshots/audit-log.png)
+
+### 修改密码
+![修改密码](./screenshots/password-update.png)
+
+</details>
+
 ## 功能特性
 
 - **分类管理**：支持新增、编辑、删除分类，分类名称唯一。
@@ -77,17 +100,18 @@ docker-compose up -d
 ### 使用 Docker 直接运行
 
 ```bash
-# 构建镜像
-docker build -t pronavigator:latest .
+# 拉取镜像
+docker pull ghcr.io/letsopen/pronavigator:latest
+
 
 # 运行容器
 docker run -d \
   -p 3000:3000 \
   -e JWT_SECRET="your-secure-random-secret-key-at-least-32-characters-long" \
-  -v company-nav-data:/app/data \
-  -v company-nav-uploads:/app/public/uploads \
+  -v your-nav-data-path:/app/data \
+  -v your-nav-uploads-path:/app/public/uploads \
   --name pronavigator \
-  pronavigator:latest
+  ghcr.io/letsopen/pronavigator:latest
 ```
 
 ### 数据持久化说明
@@ -147,6 +171,7 @@ pronavigator/
 ├── data/                 # SQLite 数据目录
 ├── migrations/           # 数据库迁移脚本
 ├── public/               # 静态资源与上传文件
+├── screenshots/          # 界面截图
 ├── src/                  # 后端源代码
 │   ├── config/           # 配置
 │   ├── controllers/      # 控制器
