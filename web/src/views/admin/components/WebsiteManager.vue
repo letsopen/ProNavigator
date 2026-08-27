@@ -116,12 +116,14 @@
         </el-checkbox>
       </el-form-item>
       <el-form-item label="说明">
-        <div class="editor-wrapper">
-          <div
-            id="editor"
-            style="height: 300px;"
-          />
-        </div>
+        <el-input
+          v-model="formData.description"
+          class="description-input"
+          type="textarea"
+          :rows="6"
+          maxlength="2000"
+          show-word-limit
+        />
       </el-form-item>
     </el-form>
     <template #footer>
@@ -144,9 +146,7 @@ import { ElMessage, ElMessageBox } from 'element-plus';
 import { Plus } from '@element-plus/icons-vue';
 import Sortable from 'sortablejs';
 import { useApi } from '../../../composables/useApi.js';
-import Editor from '@toast-ui/editor';
-import '@toast-ui/editor/dist/toastui-editor.css';
-import '@toast-ui/editor/dist/theme/toastui-editor-dark.css';
+
 
 const events = inject('adminEventBus', null);
 
@@ -158,7 +158,7 @@ const visible = ref(false);
 const editingId = ref(null);
 const fileList = ref([]);
 const tableRef = ref(null);
-let editor = null;
+
 
 const selectedCategoryId = computed(() => events?.selectedCategoryId?.value || null);
 
@@ -246,25 +246,6 @@ function notifyAuditLogRefresh() {
   }
 }
 
-async function initEditor(value) {
-  await nextTick();
-  if (!editor) {
-    editor = new Editor({
-      el: document.getElementById('editor'),
-      initialEditType: 'markdown',
-      previewStyle: 'vertical',
-      height: '300px',
-      initialValue: value || '',
-      events: {
-        change: () => {
-          formData.description = editor.getMarkdown();
-        },
-      },
-    });
-  } else {
-    editor.setMarkdown(value || '');
-  }
-}
 
 async function openDialog(row) {
   editingId.value = row ? row.id : null;
@@ -276,7 +257,7 @@ async function openDialog(row) {
   formData.removeLogo = false;
   fileList.value = row && row.logo ? [{ url: row.logo, name: 'logo' }] : [];
   visible.value = true;
-  await initEditor(formData.description);
+
 }
 
 async function onConfirm() {
@@ -337,13 +318,7 @@ onMounted(loadData);
 </script>
 
 <style scoped>
-.editor-wrapper {
+.description-input {
   width: 100%;
-}
-.editor-wrapper :deep(.toastui-editor-defaultUI) {
-  min-width: auto;
-}
-.editor-wrapper :deep(.toastui-editor-toolbar) {
-  flex-wrap: wrap;
 }
 </style>
